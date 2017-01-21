@@ -1,0 +1,31 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using UnityEngine;
+
+namespace AloneWar.Common
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    public class CorutineTaskQueue
+    {
+        private Queue<Func<IEnumerable>> TaskList { get; set; }
+
+        private IAsyncResult Result { get; set; }
+
+        public bool IsTaskRun { get { return this.Result.IsCompleted; } }
+
+        public CorutineTaskQueue()
+        {
+            this.TaskList = new Queue<Func<IEnumerable>>();
+            
+        }
+
+        
+
+    }
+}

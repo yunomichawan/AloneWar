@@ -1,0 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using AloneWar.DataObject.Sqlite.SqliteObject;
+
+namespace AloneWar.Unit.Status
+{
+    public class UnitSubStatus
+    {
+        public UnitSubStatusData SubStatus { get; set; }
+    }
+}

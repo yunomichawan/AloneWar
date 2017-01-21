@@ -1,0 +1,438 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using AloneWar.Common.Extensions;
+using AloneWar.DataObject.Sqlite.Helper.SqliteAttributes;
+using System.Reflection;
+
+namespace AloneWar.DataObject.Sqlite.Helper
+{
+    public class SqliteHelper
+    {
+        private const string SELECT_SQL = "select {0} from {1}";
+        private const string INSERT_SQL = "insert into {0} {1}";
+        private const string UPDATE_SQL = "update {0} set";
+        private const string DELETE_SQL = "delete from {0}";
+        private const string ORDER_BY_SQL = "order by {0}";
+
+        private StringBuilder ExecutetSql { get; set; }
+        private StringBuilder WhereSql { get; set; }
+        private StringBuilder JoinSql { get; set; }
+        private string[] OrderByColumns { get; set; }
+        private Dictionary<Type, string> SelectType { get; set; }
+        private Dictionary<string, string> PrimarySql { get; set; }
+
+
+        private void ExecuteSql(Action callback)
+        {
+            try
+            {
+                callback.SafeCall();
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+
+        /// <summary>
+        /// セレクタ文実行用初期化
+        /// </summary>
+        /// <param name="type"></param>
+        public void Init(Type type)
+        {
+            ExecutetSql = new StringBuilder();
+            SelectType = new Dictionary<Type, string>();
+            WhereSql = new StringBuilder();
+            JoinSql = new StringBuilder();
+            PrimarySql = new Dictionary<string, string>();
+            OrderByColumns = new string[] { };
+            this.AddSelectType(type);
+        }
+
+        /// <summary>
+        /// テーブル操作文実行用初期化
+        /// </summary>
+        /// <param name="type"></param>
+        public void Init()
+        {
+            ExecutetSql = new StringBuilder();
+            SelectType = new Dictionary<Type, string>();
+            WhereSql = new StringBuilder();
+            JoinSql = new StringBuilder();
+            PrimarySql = new Dictionary<string, string>();
+            OrderByColumns = new string[] { };
+        }
+
+        #region 条件設定 Condition setting
+
+        /// <summary>
+        /// Setting conditional statement
+        /// 条件文設定
+        /// </summary>
+        /// <param name="column"></param>
+        /// <param name="value"></param>
+        /// <param name="type"></param>
+        /// <param name="equal"></param>
+        public void AddCondition(string column, object value, Type type, bool equal)
+        {
+            if (value == null) return;
+            this.AddOperator(true);
+            DataAccessAttribute attribute = type.GetAttribute<DataAccessAttribute>();
+            AddConditionValue(column, attribute, value.ToString(), equal);
+        }
+
+        /// <summary>
+        /// Conditional statement (in) setting
+        /// 条件文(in)設定
+        /// </summary>
+        /// <param name="column"></param>
+        /// <param name="values"></param>
+        /// <param name="type"></param>
+        /// <param name="equal"></param>
+        public void AddInCondition(string column, string[] values, Type type, bool equal)
+        {
+            if (values == null) return;
+            this.AddOperator(true);
+            DataAccessAttribute attribute = type.GetAttribute<DataAccessAttribute>();
+            AddInConditionValue(column, attribute, values, equal);
+        }
+
+        /// <summary>
+        /// Additional configuration conditional statement
+        /// 条件文追加設定
+        /// </summary>
+        /// <param name="column"></param>
+        /// <param name="value"></param>
+        /// <param name="type"></param>
+        /// <param name="isAnd"></param>
+        /// <param name="equal"></param>
+        public void AddCondition(string column, object value, Type type, bool isAnd, bool equal)
+        {
+            if (value == null) return;
+            this.AddOperator(isAnd);
+            DataAccessAttribute attribute = type.GetAttribute<DataAccessAttribute>();
+            AddConditionValue(column, attribute, value.ToString(), equal);
+        }
+
+        /// <summary>
+        /// Conditional statement (in) additional configuration
+        /// 条件文(in)追加設定
+        /// </summary>
+        /// <param name="column"></param>
+        /// <param name="values"></param>
+        /// <param name="type"></param>
+        /// <param name="isAnd"></param>
+        /// <param name="equal"></param>
+        public void AddInCondition(string column, string[] values, Type type, bool isAnd, bool equal)
+        {
+            if (values == null) return;
+            this.AddOperator(isAnd);
+            DataAccessAttribute attribute = type.GetAttribute<DataAccessAttribute>();
+            AddInConditionValue(column, attribute, values, equal);
+        }
+
+        /// <summary>
+        /// Condition value setting
+        /// 条件値設定
+        /// </summary>
+        /// <param name="column"></param>
+        /// <param name="attribute"></param>
+        /// <param name="value"></param>
+        /// <param name="equal"></param>
+        private void AddConditionValue(string column, DataAccessAttribute attribute, string value, bool equal)
+        {
+            if (equal)
+            {
+                WhereSql.AppendLine(string.Format("{0}.{1} = '{2}'", attribute.TableName, column, value.ToString()));
+            }
+            else
+            {
+                WhereSql.AppendLine(string.Format("{0}.{1} != '{2}'", attribute.TableName, column, value.ToString()));
+            }
+        }
+
+        /// <summary>
+        /// Condition value (in) setting
+        /// 条件値(in)設定
+        /// </summary>
+        /// <param name="column"></param>
+        /// <param name="attribute"></param>
+        /// <param name="values"></param>
+        /// <param name="equal"></param>
+        private void AddInConditionValue(string column, DataAccessAttribute attribute, string[] values, bool equal)
+        {
+            if (equal)
+            {
+                WhereSql.AppendLine(string.Format("{0}.{1} in ({2})", attribute.TableName, column, string.Format("'{0}'", string.Join("','", values))));
+            }
+            else
+            {
+                WhereSql.AppendLine(string.Format("{0}.{1} not in ({2})", attribute.TableName, column, string.Format("'{0}'", string.Join("','", values))));
+            }
+        }
+
+        /// <summary>
+        /// And Or statement setting
+        /// And Or 文設定
+        /// </summary>
+        /// <param name="andOr"></param>
+        private void AddOperator(bool isAnd)
+        {
+            if (string.IsNullOrEmpty(WhereSql.ToString()))
+            {
+                WhereSql.AppendLine("where");
+            }
+            else
+            {
+                if (isAnd)
+                {
+                    WhereSql.AppendLine("and");
+                }
+                else
+                {
+                    WhereSql.AppendLine("or");
+                }
+            }
+        }
+
+        #endregion
+
+        #region テーブル結合 Add join table
+
+        /// <summary>
+        /// Add join table (And join only )
+        /// 結合テーブル追加 (And結合のみ)
+        /// </summary>
+        /// <param name="baseType"></param>
+        /// <param name="joinColumns">The same name row ,同名列</param>
+        /// <param name="isInner"></param>
+        public void AddJoinTable(Type baseType, Type joinType, string[] joinColumns, bool isInner = true)
+        {
+            DataAccessAttribute attribite = joinType.GetAttribute<DataAccessAttribute>();
+            string tableName = baseType.GetAttribute<DataAccessAttribute>().TableName;
+            string joinTableType = (isInner) ? "inner" : "left";
+            StringBuilder joinConditions = new StringBuilder();
+
+            for (int i = 0; i < joinColumns.Length; i++)
+            {
+                if (i.Equals(0)) joinConditions.Append(" and ");
+                joinConditions.Append(string.Format("{0}.{1} = {2}.{3}", tableName, joinColumns[i], attribite.TableName, joinColumns[i]));
+            }
+
+            JoinSql.AppendLine(string.Format("{0} join {1} on {2}", joinTableType, attribite.TableName, joinConditions.ToString()));
+
+            this.AddSelectType(joinType);
+        }
+
+        /// <summary>
+        /// Add join table
+        /// 結合テーブル追加
+        /// </summary>
+        /// <param name="baseType"></param>
+        /// <param name="joinColumns">同名列</param>
+        /// <param name="isInner"></param>
+        public void AddJoinTable(Type baseType, Type joinType, string joinColumn, bool isInner = true)
+        {
+            this.AddJoin(baseType, joinType, joinColumn, joinColumn, isInner);
+        }
+
+        /// <summary>
+        /// Add join table
+        /// 結合テーブル追加
+        /// </summary>
+        /// <param name="baseType"></param>
+        /// <param name="joinType"></param>
+        /// <param name="baseColumn"></param>
+        /// <param name="joinColumn"></param>
+        /// <param name="isInner"></param>
+        public void AddJoinTable(Type baseType, Type joinType, string baseColumn, string joinColumn, bool isInner = true)
+        {
+            this.AddJoin(baseType, joinType, baseColumn, joinColumn, isInner);
+        }
+
+        /// <summary>
+        /// Add join table(private)
+        /// 結合テーブル追加(private)
+        /// </summary>
+        /// <param name="baseType"></param>
+        /// <param name="joinType"></param>
+        /// <param name="baseColumn"></param>
+        /// <param name="joinColumn"></param>
+        /// <param name="isInner"></param>
+        private void AddJoin(Type baseType, Type joinType, string baseColumn, string joinColumn, bool isInner = true)
+        {
+            string joinTableName = joinType.GetAttribute<DataAccessAttribute>().TableName;
+            string baseTableName = baseType.GetAttribute<DataAccessAttribute>().TableName; 
+            string joinTableType = (isInner) ? "inner" : "left";
+            StringBuilder joinConditions = new StringBuilder();
+            joinConditions.Append(string.Format("{0}.{1} = {2}.{3}", baseTableName, baseColumn, joinTableName, joinColumn));
+            JoinSql.AppendLine(string.Format("{0} join {1} on {2}", joinTableType, joinTableName, joinConditions.ToString()));
+
+            this.AddSelectType(joinType);
+        }
+
+        /// <summary>
+        /// Add a column bound to when joining the table .
+        /// テーブル結合時セレクト列を回収
+        /// </summary>
+        /// <param name="type"></param>
+        private void AddSelectType(Type type)
+        {
+            if (!this.SelectType.ContainsKey(type))
+            {
+                this.SelectType.Add(type, this.GetSqliteColumn(type));
+            }
+        }
+
+        #endregion
+
+        #region ソート設定 Sort settings
+
+        /// <summary>
+        /// Add the sort field
+        /// ソート項目追加
+        /// </summary>
+        /// <param name="column"></param>
+        /// <param name="type"></param>
+        /// <param name="isAsc"></param>
+        public void AddOrderByColumns(string column, Type type, bool isAsc)
+        {
+            string[] baseArray = this.OrderByColumns;
+            string[] newArray = new string[this.OrderByColumns.Length + 1];
+            string format = "{0}.{1}" + (isAsc ? " asc" : " desc");
+            Array.Copy(baseArray, newArray, Math.Min(baseArray.Length, newArray.Length));
+            this.OrderByColumns = newArray;
+
+            this.OrderByColumns[this.OrderByColumns.Length - 1] = string.Format(format, type.GetAttribute<DataAccessAttribute>().TableName, column);
+        }
+
+        /// <summary>
+        /// Set the sort item
+        /// ソート項目を設定
+        /// </summary>
+        /// <param name="columns">
+        /// It is required is the name of the property of the same class .
+        /// 同じクラスのプロパティ名であること
+        /// </param>
+        /// <param name="type"></param>
+        public void SetOrderByColumns(string[] columns, Type type, bool isAsc)
+        {
+            string[] orderColumns = new string[columns.Length];
+            string tableName = type.GetAttribute<DataAccessAttribute>().TableName;
+            string format = "{0}.{1}" + (isAsc ? " asc" : " desc");
+
+            for (int i = 0; i < columns.Length; i++)
+            {
+                orderColumns[i] = string.Format(format, tableName, columns[i]);
+            }
+            this.OrderByColumns = orderColumns;
+        }
+
+        #endregion
+
+        #region プライマリーキー、値、SQLite列回収 Primary key , value , SQLite column recovery
+
+        /// <summary>
+        /// Recovering the primary key and values
+        /// プライマリキーと値を回収
+        /// </summary>
+        private void GetPrimaryKeyValue(object component)
+        {
+            Type type = component.GetType();
+            PropertyInfo[] propertyInfoArray = type.GetProperties();
+            foreach (PropertyInfo propertyInfo in propertyInfoArray)
+            {
+                if (propertyInfo.DeclaringType.Equals(type))
+                {
+                    SqliteAttribute attribute = propertyInfo.GetAttribute<SqliteAttribute>();
+                    if (attribute != null)
+                    {
+                        if (attribute.IsPrimaryKey)
+                        {
+                            this.AddPrimaryKey(propertyInfo.GetValue(component, null), propertyInfo.Name);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Add a primary key
+        /// プライマリキーを追加
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        private void AddPrimaryKey(object obj, string properyName)
+        {
+            if (obj != null)
+            {
+                if (!this.PrimarySql.ContainsKey(properyName))
+                {
+                    this.PrimarySql.Add(properyName, obj.ToString());
+                }
+            }
+            else
+            {
+                if (!this.PrimarySql.ContainsKey(properyName))
+                {
+                    this.PrimarySql.Add(properyName, string.Empty);
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// Get the column that is included in the SQLiteComponent
+        /// SQLiteComponentに含まれる列を取得
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private string GetSqliteColumn(Type type)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            bool first = true;
+            PropertyInfo[] propertyInfoArray = type.GetProperties();
+            string tableName = type.GetAttribute<DataAccessAttribute>().TableName;
+            string format = "{0}.{1}";
+
+            foreach (PropertyInfo propertyInfo in propertyInfoArray)
+            {
+                SqliteAttribute attribute = propertyInfo.GetAttribute<SqliteAttribute>();
+
+                if (attribute != null)
+                {
+                    if (attribute.IsMapping)
+                    {
+                        if (first)
+                        {
+                            first = false;
+                        }
+                        else
+                        {
+                            stringBuilder.Append(",");
+                        }
+
+                        stringBuilder.AppendLine(string.Format(format, tableName, propertyInfo.Name));
+                    }
+                }
+            }
+
+            return stringBuilder.ToString();
+        }
+
+        #endregion
+    }
+
+    public class SqliteQueryBuilder
+    {
+        private StringBuilder ExecutetSql { get; set; }
+        private StringBuilder WhereSql { get; set; }
+        private StringBuilder JoinSql { get; set; }
+        private string[] OrderByColumns { get; set; }
+        private Dictionary<Type, string> SelectType { get; set; }
+        private Dictionary<string, string> PrimarySql { get; set; }
+
+        
+    }
+}

@@ -1,0 +1,46 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using AloneWar.DataObject.Sqlite.Helper;
+using AloneWar.DataObject.Sqlite.SqliteObject;
+using AloneWar.Common.Bind;
+using AloneWar.Common.TaskHelper;
+using AloneWar.Unit.Status;
+using AloneWar.DataObject.Sqlite.SqliteObject.Base;
+
+namespace AloneWar.DataObject.Sqlite.Service
+{
+    public class UnitStatusService
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="unitId"></param>
+        /// <param name="stageId"></param>
+        /// <returns></returns>
+        public UnitObjectStatus<T> GetUnitObejctStatusOnStage<T>(int unitId, int stageId) where T : SqliteBaseData
+        {
+            SqliteQueryBuilder builder = new SqliteQueryBuilder(typeof(UnitBaseStatusData));
+            builder.AddJoinTable(typeof(UnitBaseStatusData), typeof(T), "Id");
+            builder.AddJoinTable(typeof(UnitBaseStatusData), typeof(UnitStageStatusData), "Id", "UnitId");
+            
+            DataTable dataTable = SqliteHelper.Instance.GetSqliteObjectTable(builder);
+
+            UnitObjectStatus<T> unitObjectStatus = new UnitObjectStatus<T>();
+
+            AsyncTaskHelper helper = new AsyncTaskHelper(() =>
+            {
+                unitObjectStatus.BaseStatus = DataBinding<UnitBaseStatusData>.DataTableToObjectList(dataTable).FirstOrDefault();
+                unitObjectStatus.UnitStatus = DataBinding<T>.DataTableToObjectList(dataTable).FirstOrDefault();
+                unitObjectStatus.StageStatus = DataBinding<UnitStageStatusData>.DataTableToObjectList(dataTable).FirstOrDefault();
+            });
+
+            helper.TaskRun();
+
+            return unitObjectStatus;
+        }
+    }
+}

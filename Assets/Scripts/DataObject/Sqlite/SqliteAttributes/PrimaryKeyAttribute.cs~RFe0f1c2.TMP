@@ -1,0 +1,17 @@
+﻿using System;
+
+namespace AloneWar.DataObject.Sqlite.Helper.SqliteAttributes
+{
+    /// <summary>
+    /// プライマリキーを設定する属性
+    /// </summary>
+    public class PrimaryKeyAttribute : SqliteAttribute
+    {
+        public override bool IsPrimary { get; set; }
+
+        public PrimaryKeyAttribute()
+        {
+            this.IsPrimary = true;
+        }
+    }
+}
