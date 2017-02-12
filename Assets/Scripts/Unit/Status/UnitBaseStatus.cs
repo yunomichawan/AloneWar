@@ -1,10 +1,10 @@
-﻿using System;
+﻿using AloneWar.Common.Component;
+using AloneWar.DataObject.Sqlite.SqliteObject.Base;
+using AloneWar.DataObject.Sqlite.SqliteObject.Master;
+using AloneWar.DataObject.Sqlite.SqliteObject.Transaction;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AloneWar.DataObject.Sqlite.SqliteObject;
-using UnityEngine;
+using AloneWar.DataObject;
+using AloneWar.Common;
 
 namespace AloneWar.Unit.Status
 {
@@ -14,13 +14,19 @@ namespace AloneWar.Unit.Status
 
         public UnitStageStatusData StageStatus { get; set; }
 
-        public List<ItemData> ItemList { get; set; }
+        public UnitAssetData UnitAssetData { get; set; }
 
-        public List<SkillData> SkillList { get; set; }
+        /// <summary>
+        /// Main:UnitItemData
+        /// Sub:UnitStageItemData
+        /// </summary>
+        public ForeignKeyObject<ItemData> UnitItemDataList { get; set; }
 
-        public UnitBaseStatus()
-        {
+        /// <summary>
+        /// Main:UnitSkillData
+        /// Sub:UnitStageStatusData
+        /// </summary>
+        public ForeignKeyObject<SkillData> UnitSkillDataList { get; set; }
 
-        }
     }
 }

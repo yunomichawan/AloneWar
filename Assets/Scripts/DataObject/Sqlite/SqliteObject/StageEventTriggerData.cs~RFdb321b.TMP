@@ -1,0 +1,65 @@
+﻿using System;
+using AloneWar.DataObject.Sqlite.SqliteObject.Base;
+using AloneWar.DataObject.Sqlite.SqliteAttributes;
+
+namespace AloneWar.DataObject.Sqlite.SqliteObject
+{
+    /// <summary>
+    /// ステージイベント管理テーブル
+    /// </summary>
+    [DataAccess("StageEventData")]
+    public class StageEventData : SqliteBaseData,IDefaultSort
+    {
+
+        #region SqliteProperty
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [SqliteProperty]
+        public int StageId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [SqliteProperty]
+        public int EventId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [SqliteProperty]
+        public int SortNo { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [SqliteProperty]
+        public int TriggerCategory { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [SqliteProperty]
+        public string TriggerSender { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [SqliteProperty]
+        public int VaildCount { get; set; }
+
+        #endregion
+
+        /// <summary>
+        /// 有効フラグ
+        /// </summary>
+        public bool VaildFlg { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public int RunCount { get; set; }
+
+    }
+}

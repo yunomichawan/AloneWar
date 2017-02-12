@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using UnityEngine;
 
 // 拡張メソッドを実装
 namespace AloneWar.Common.Extensions
@@ -12,6 +13,17 @@ namespace AloneWar.Common.Extensions
             {
                 callback();
             }
+        }
+
+        /// <summary>
+        /// コールバックにメモ付きで実行(デバッグ用)
+        /// </summary>
+        /// <param name="callback"></param>
+        /// <param name="title"></param>
+        public static void CallMemo(this Action callback,string title)
+        {
+            callback.SafeCall();
+            Debug.Log(string.Format("Callback_Memo:{0}", title));
         }
     }
 

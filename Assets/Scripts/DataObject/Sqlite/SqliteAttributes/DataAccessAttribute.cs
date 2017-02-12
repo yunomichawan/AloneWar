@@ -10,9 +10,12 @@ namespace AloneWar.DataObject.Sqlite.SqliteAttributes
     {
         public string TableName { get; set; }
 
-        public DataAccessAttribute(string tableName)
+        public string DbName { get; set; }
+
+        public DataAccessAttribute(string tableName,string dbName)
         {
             this.TableName = tableName;
+            this.DbName = dbName;
         }
     }
 }

@@ -11,11 +11,11 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Base
         /// <summary>
         /// 開始日時
         /// </summary>
-        DateTime StartDate { get; set; }
+        DateTime CreateDate { get; set; }
 
         /// <summary>
         /// 更新日時
         /// </summary>
-        DateTime EndDate { get; set; }
+        DateTime UpdateDate { get; set; }
     }
 }

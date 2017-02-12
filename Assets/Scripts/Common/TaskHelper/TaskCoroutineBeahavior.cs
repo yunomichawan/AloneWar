@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace AloneWar.Common.TaskHelper
@@ -40,10 +39,10 @@ namespace AloneWar.Common.TaskHelper
         /// <summary>
         /// タスク実行
         /// </summary>
-        protected void TaskRun()
+        public IEnumerator TaskRun()
         {
             this.TaskCompleted = false;
-            StartCoroutine(this.TaskStart());
+            yield return StartCoroutine(this.TaskStart());
         }
 
         /// <summary>

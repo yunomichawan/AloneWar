@@ -23,26 +23,22 @@ namespace AloneWar.Common.Bind
         /// <param name="component"></param>
         public static void SetGuiComponent(Transform parentObj, object component)
         {
-            AsyncTaskHelper helper = new AsyncTaskHelper(() =>
+            for (int i = 0; i < parentObj.childCount; i++)
             {
-                for (int i = 0; i < parentObj.childCount; i++)
+                Type setType = component.GetType();
+
+                Transform childTransform = parentObj.GetChild(i);
+
+                // 再帰
+                SetGuiComponent(childTransform, component);
+
+                PropertyInfo propertyInfo = setType.GetProperty(childTransform.name);
+
+                if (propertyInfo != null)
                 {
-                    Type setType = component.GetType();
-
-                    Transform childTransform = parentObj.GetChild(i);
-
-                    // 再帰
-                    SetGuiComponent(childTransform, component);
-
-                    PropertyInfo propertyInfo = setType.GetProperty(childTransform.name);
-
-                    if (propertyInfo != null)
-                    {
-                        SetPropertyValue(childTransform, propertyInfo.GetGetMethod().Invoke(component, null));
-                    }
+                    SetPropertyValue(childTransform, propertyInfo.GetGetMethod().Invoke(component, null));
                 }
-            });
-            helper.TaskRun();
+            }
         }
 
         /// <summary>
@@ -112,24 +108,20 @@ namespace AloneWar.Common.Bind
         /// <returns></returns>
         public static T SetGuiComponentToObject<T>(Transform parentTransform, object baseObject)
         {
-            AsyncTaskHelper helper = new AsyncTaskHelper(() =>
+            for (int i = 0; i < parentTransform.childCount; i++)
             {
-                for (int i = 0; i < parentTransform.childCount; i++)
+                Transform childTransform = parentTransform.transform.GetChild(i);
+
+                // 再帰
+                SetGuiComponentToObject<T>(childTransform, baseObject);
+
+                PropertyInfo propertyInfo = typeof(T).GetProperty(childTransform.name);
+                if (propertyInfo != null)
                 {
-                    Transform childTransform = parentTransform.transform.GetChild(i);
-
-                    // 再帰
-                    SetGuiComponentToObject<T>(childTransform, baseObject);
-
-                    PropertyInfo propertyInfo = typeof(T).GetProperty(childTransform.name);
-                    if (propertyInfo != null)
-                    {
-                        SetComponentToProperty(childTransform, propertyInfo, baseObject);
-                    }
+                    SetComponentToProperty(childTransform, propertyInfo, baseObject);
                 }
-            });
+            }
 
-            helper.TaskRun();
 
             return (T)baseObject;
         }
