@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using AloneWar.Stage.Event.EventObject;
 using AloneWar.Stage.Event.EventObject.Base;
 
 namespace AloneWar.Stage.Component
@@ -12,13 +11,16 @@ namespace AloneWar.Stage.Component
     public abstract class BaseStageObject : MonoBehaviour
     {
 
-        #region 座標
 
+
+        #region 座標
 
         /// <summary>
         /// 
         /// </summary>
         public abstract int PositionId { get; set; }
+
+        private int _PositionId { get; set; }
 
         /// <summary>
         /// 直前の座標

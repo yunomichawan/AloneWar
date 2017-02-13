@@ -206,8 +206,8 @@ namespace AloneWar.Stage
                             positionIdList.ForEach(p =>
                             {
                                 MassComponent massComponent = this.StageInformation.MassComponentList[p];
-                                PositionEvent massEvent = new PositionEvent(stageEventInformation, massComponent);
-                                massComponent.MassStatus.CloseEventList.Add(massEvent);
+                                MassEvent massEvent = new MassEvent(stageEventInformation, massComponent);
+                                massComponent.MassStatus.MassEventList.Add(massEvent);
                             });
                             break;
                         case EventTriggerCategory.TargetUnitKill:

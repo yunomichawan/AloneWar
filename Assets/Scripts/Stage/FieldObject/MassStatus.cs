@@ -43,7 +43,7 @@ namespace AloneWar.Stage.FieldObject
 
                 if (this.isClose)
                 {
-                    this.CloseEventList.ForEach(m => {
+                    this.MassEventList.ForEach(m => {
                         if (m.VaildFlg)
                         {
                             StageManager.Instance.stageEventBuilder.TaskQueue.Enqueue(m.EventTask);
@@ -54,7 +54,7 @@ namespace AloneWar.Stage.FieldObject
         }
         private bool isClose = false;
 
-        public List<PositionEvent> CloseEventList { get { return this.closeEventList; } set { this.closeEventList = value; } }
-        private List<PositionEvent> closeEventList = new List<PositionEvent>();
+        public List<MassEvent> MassEventList { get { return this.massEventList; } set { this.massEventList = value; } }
+        private List<MassEvent> massEventList = new List<MassEvent>();
     }
 }
