@@ -243,48 +243,44 @@ namespace AloneWar.DataObject.Sqlite.Helper
                     string columnName = Marshal.PtrToStringAnsi(sqlite3_column_name(stmHandle, i));
                     dataTable.Columns.Add(columnName);
                 }
-                AsyncTaskHelper helper = new AsyncTaskHelper(() =>
+                //populate datatable
+                while (sqlite3_step(stmHandle) == SQLITE_ROW)
                 {
-                    //populate datatable
-                    while (sqlite3_step(stmHandle) == SQLITE_ROW)
+                    object[] row = new object[columnCount];
+                    for (int i = 0; i < columnCount; i++)
                     {
-                        object[] row = new object[columnCount];
-                        for (int i = 0; i < columnCount; i++)
+                        switch (sqlite3_column_type(stmHandle, i))
                         {
-                            switch (sqlite3_column_type(stmHandle, i))
-                            {
-                                case SQLITE_INTEGER:
-                                    row[i] = sqlite3_column_int(stmHandle, i);
-                                    break;
+                            case SQLITE_INTEGER:
+                                row[i] = sqlite3_column_int(stmHandle, i);
+                                break;
 
-                                case SQLITE_TEXT:
-                                    IntPtr text = sqlite3_column_text(stmHandle, i);
-                                    row[i] = Marshal.PtrToStringAnsi(text);
-                                    break;
+                            case SQLITE_TEXT:
+                                IntPtr text = sqlite3_column_text(stmHandle, i);
+                                row[i] = Marshal.PtrToStringAnsi(text);
+                                break;
 
-                                case SQLITE_FLOAT:
-                                    row[i] = sqlite3_column_double(stmHandle, i);
-                                    break;
+                            case SQLITE_FLOAT:
+                                row[i] = sqlite3_column_double(stmHandle, i);
+                                break;
 
-                                case SQLITE_BLOB:
-                                    IntPtr blob = sqlite3_column_blob(stmHandle, i);
-                                    int size = sqlite3_column_bytes(stmHandle, i);
-                                    byte[] data = new byte[size];
-                                    Marshal.Copy(blob, data, 0, size);
-                                    row[i] = data;
-                                    break;
+                            case SQLITE_BLOB:
+                                IntPtr blob = sqlite3_column_blob(stmHandle, i);
+                                int size = sqlite3_column_bytes(stmHandle, i);
+                                byte[] data = new byte[size];
+                                Marshal.Copy(blob, data, 0, size);
+                                row[i] = data;
+                                break;
 
-                                case SQLITE_NULL:
-                                    row[i] = null;
-                                    break;
-                            }
+                            case SQLITE_NULL:
+                                row[i] = null;
+                                break;
                         }
-
-                        dataTable.AddRow(row);
                     }
-                });
 
-                helper.TaskRun();
+                    dataTable.AddRow(row);
+                }
+
             });
 
             return dataTable;
@@ -302,56 +298,61 @@ namespace AloneWar.DataObject.Sqlite.Helper
                 for (int i = 0; i < columnCount; i++)
                 {
                     string columnName = Marshal.PtrToStringAnsi(sqlite3_column_name(stmHandle, i));
-                    PropertyInfo propertyInfo = type.GetProperty(columnName);
+                    string[] columnSplit = columnName.Split('.');
+                    PropertyInfo propertyInfo = null;
+                    if (columnSplit.Length > 1)
+                    {
+                        propertyInfo = type.GetProperty(columnName);
+                    }
+                    else
+                    {
+                        propertyInfo = type.GetProperty(columnSplit[0]);
+                    }
                     propertyInfoList.Add(propertyInfo);
                 }
 
-                AsyncTaskHelper helper = new AsyncTaskHelper(() =>
+                //populate datatable
+                while (sqlite3_step(stmHandle) == SQLITE_ROW)
                 {
-                    //populate datatable
-                    while (sqlite3_step(stmHandle) == SQLITE_ROW)
+                    T obj = (T)Activator.CreateInstance(typeof(T), new object[] { });
+                    object[] row = new object[columnCount];
+                    for (int i = 0; i < columnCount; i++)
                     {
-                        T obj = (T)Activator.CreateInstance(typeof(T), new object[] { });
-                        object[] row = new object[columnCount];
-                        for (int i = 0; i < columnCount; i++)
+                        switch (sqlite3_column_type(stmHandle, i))
                         {
-                            switch (sqlite3_column_type(stmHandle, i))
-                            {
-                                case SQLITE_INTEGER:
-                                    DataBinding<T>.SetPropertyValue(propertyInfoList[i], obj, sqlite3_column_int(stmHandle, i));
-                                    break;
+                            case SQLITE_INTEGER:
+                                DataBinding<T>.SetPropertyValue(propertyInfoList[i], obj, sqlite3_column_int(stmHandle, i));
+                                break;
 
-                                case SQLITE_TEXT:
-                                    IntPtr text = sqlite3_column_text(stmHandle, i);
-                                    DataBinding<T>.SetPropertyValue(propertyInfoList[i], obj, Marshal.PtrToStringAnsi(text));
-                                    break;
+                            case SQLITE_TEXT:
+                                IntPtr text = sqlite3_column_text(stmHandle, i);
+                                DataBinding<T>.SetPropertyValue(propertyInfoList[i], obj, Marshal.PtrToStringAnsi(text));
+                                break;
 
-                                case SQLITE_FLOAT:
-                                    DataBinding<T>.SetPropertyValue(propertyInfoList[i], obj, sqlite3_column_double(stmHandle, i));
-                                    break;
+                            case SQLITE_FLOAT:
+                                DataBinding<T>.SetPropertyValue(propertyInfoList[i], obj, sqlite3_column_double(stmHandle, i));
+                                break;
 
-                                case SQLITE_BLOB:
-                                    IntPtr blob = sqlite3_column_blob(stmHandle, i);
-                                    int size = sqlite3_column_bytes(stmHandle, i);
-                                    byte[] data = new byte[size];
-                                    Marshal.Copy(blob, data, 0, size);
-                                    DataBinding<T>.SetPropertyValue(propertyInfoList[i], obj, data);
-                                    break;
+                            case SQLITE_BLOB:
+                                IntPtr blob = sqlite3_column_blob(stmHandle, i);
+                                int size = sqlite3_column_bytes(stmHandle, i);
+                                byte[] data = new byte[size];
+                                Marshal.Copy(blob, data, 0, size);
+                                DataBinding<T>.SetPropertyValue(propertyInfoList[i], obj, data);
+                                break;
 
-                                case SQLITE_NULL:
-                                    DataBinding<T>.SetPropertyValue(propertyInfoList[i], obj, null);
-                                    break;
-                            }
-                        }
-                        lock (lockObject)
-                        {
-                            objectList.Add(obj);
+                            case SQLITE_NULL:
+                                DataBinding<T>.SetPropertyValue(propertyInfoList[i], obj, null);
+                                break;
                         }
                     }
-                });
+                    lock (lockObject)
+                    {
+                        objectList.Add(obj);
+                    }
+                }
 
-                helper.TaskRun();
-                
+
             });
 
             return objectList;

@@ -34,45 +34,47 @@
 ・プライマリキーは連番で管理する
 10．セーブデータについて
 ・Json形式を検討
+・Sqliteで行う場合、データごとにDBファイルを分ける（データの混合、データ量の肥大化を回避 ）
+・初期DBファイルは残すこと
 XX．その他
 ・リリースはSteamもしくはniconico等で行う予定。あくまで予定、ほかにも手段を考えたい
 ・最終的な目標はコンシューマー。そこまでクオリティを上げられるか？
 ・このテキストファイルをPDF、Word等で管理する。
 ・実装の関係上どうしてもスケジュール通りに行かない場合が出てくるはず。その際は先に対象のブランチを作成しそのブランチで管理する。コンフリクトが怖いが練習と考える。
 □バージョンスケジュール
-0.0　…　インフラ整備、方針決定
-		 |-1.0実装内容決定
-		 |-ソース管理方法
-		 |-データ取得方法(Sqlite、Json)
-		 |-DB設計
+0.0　…　インフラ整備、方針決定					
+		 |-1.0実装内容決定						
+		 |-ソース管理方法						
+		 |-データ取得方法(Sqlite、Json)			
+		 |-DB設計								
 
-0.1　…　UI実装
-		 |-タイトル
-		 |-ゲームスタート
-		 |-チュートリアル
-		 |-ゲームオーバー
-		 |-エンドロール
-		 |-ADVUI
-		 |-ロード
-		 |-ホームUI
-		 |	|-ユニット一覧UI
-		 |	|-ユニット育成UI
-		 |	|-アイテム一覧UI
-		 |	|-アイテム装備UI
-		 |	|-ステージ一覧UI
-		 |	|-セーブ/ロード一覧UI
-		 |	|-オプションUI
-		 |	|	|-ユニット移動速度
-		 |-ステージ操作UI
-		 |	|-メインコマンドUI
-		 |	|-ユニットコマンドUI
+0.1　…　UI実装									
+		 |-タイトル								
+		 |-ゲームスタート						
+		 |-チュートリアル						
+		 |-ゲームオーバー						
+		 |-エンドロール							
+		 |-ADVUI								
+		 |-ロード								
+		 |-ホームUI								
+		 |	|-ユニット一覧UI					
+		 |	|-ユニット育成UI					
+		 |	|-アイテム一覧UI					
+		 |	|-アイテム装備UI					
+		 |	|-ステージ一覧UI					
+		 |	|-セーブ/ロード一覧UI				
+		 |	|-オプションUI						
+		 |	|	|-ユニット移動速度				
+		 |-ステージ操作UI						
+		 |	|-メインコマンドUI					
+		 |	|-ユニットコマンドUI				
 
-0.2　…　ADV実装
-		 |-ウィンドウ操作
-		 |-テキスト表示
-		 |-BGM、SE
-		 |-演出
-			|-グラフィック変化
+0.2　…　ADV実装								
+		 |-ウィンドウ操作						
+		 |-テキスト表示							
+		 |-BGM、SE								
+		 |-演出									
+			|-グラフィック変化					
 			|-暗転
 			|-簡易アニメーション
 0.3　…　エディター拡張
@@ -214,19 +216,214 @@ Project
 
 □DB、ER図
 ・必要なテーブル名を列挙
-Save													…　セーブ
-UnitBaseStatus											…　ユニットステータス
-MainUnitStatus											…　メインユニット
-SubUnitStatus											…　サブユニット
-UnitUsedHistoryData										…　ユニット使用履歴
-GrowTableData											…　成長幅
-SkillTableData											…　スキル
-ItemTableData											…　アイテム
-StageTableData											…　ステージ
-StageUnitTableData										…　ステージごとのユニット配置
-StageEventTableData										…　ステージごとのイベント
-StageClearTableData										…　ステージクリア情報
-ContinueStageData										…　ステージ中断情報
-ScenarioTableData										…　シナリオ
-ConfigData												…　ゲーム設定
-MasterTabldeData										…　コード等
+-- Master --
+UnitBaseStatusData										…　status FK AssetId
+UnitAssetData											…　asset FK UnitId,PrefabId,FaceId,
+UnitMainStatusData										…　main FK UnitId
+UnitSubStatusData										…　sub FK UnitId
+UnitMaxStatusData										…　maxparam
+UnitStageStatusData										…　unit stage FK StageId,UnitId
+UnitGrowData											…　grow FK UnitId
+UnitStageItemData										…　関連付け(enemy) FK UnitId,ItemId,StageId
+UnitStageSkillData										…　関連付け(enemy) FK UnitId,SkillId,StageId
+UnitStagePlacementData									…　placement FK StageId
+ExperienceData											…　experience
+SkillData												…　skill FK StatusGrantedParamId,IconId
+SkillLevelData											…　skill level FK SkillId
+ItemData												…　item FK StatusGrantedParamId,IconId
+StageData												…　stage
+StageClearTriggerData									…　stage clear trigger FK StageId,TriggerId
+MissionData												…　mission trigger FK StageId,TriggerId
+EventData												…　event FK? EventSender(PrimaryKey) 
+EventTriggerData										…　trigger FK? TriggerSender(PrimaryKey) 
+StageEventTriggerData									…　trigger FK StageId,EventId,TriggerId
+StatusGrantedParamData									…　status param 
+ScenarioData											…　Scenario
+ScenarioEventData										…　scenario event FK ScenarioId,EventId
+ScenarioEventTriggerData								…　scenario event FK ScenarioId,EventId
+MasterCodeData											…　MasterCode
+ResourcePathData										…　Resource
+LabelResourcesData										…　LabelResource
+
+-- Transaction --
+EventStatusData											…　event status FK EventId
+MissionStatusData										…　status trigger FK MissionId
+SaveData												…　save
+UnitItemData											…　関連付け(main,sub) FK UnitId(main),ItemId
+UnitSkillData											…　関連付け(main,sub) FK UnitId(main),SkillId
+UnitUsedHistoryData										…　使用履歴 FK UnitId
+UnitGrowData											…　 FK UnitId
+StageHistorydData										…　hisotory FK StageId
+StageContinueData										…　Continue FK StageId
+HaveSubUnitData											…　have sub unit FK UnitId
+HaveItemData											…　have item FK UnitId
+GameConfigData											…　Config
+
+// 中断、中断データ終了後の処理は綿密に計画すること
+
+ContinueEventStatusData									…　event status FK EventId
+ContinueUnitItemData									…　関連付け(main,sub) FK UnitId(main),ItemId
+ContinueUnitSkillData									…　関連付け(main,sub) FK UnitId(main),SkillId
+ContinueUnitStageStatusData								…　unit stage FK StageId,UnitId
+ContinueUnitStageItemData								…　関連付け(enemy) FK UnitId,ItemId,StageId
+
+//
+
+・詳細
+SaveData												
+・Id
+・CreateDate
+・UpdateDate
+UnitBaseStatusData										
+・Id
+・Name
+・Hp
+・Attack
+・Defence
+・Range
+・Move
+・Luck
+・HIt
+・Avoid
+・PrefabId
+・FaceId
+UnitMainStatusData										
+・Id
+・UnitId(FK)
+・UnitCategory(Type)									
+・Mp
+
+UnitSubStatusData										
+・Id
+・UnitId(FK)
+・Cost
+・AiCategory											
+UnitUsedHistoryData										
+・Id
+・UnitId(FK)
+・Count
+UnitMaxStatusData										
+・Id
+・UnitId
+・Hp
+・Mp
+・Attack
+・Defence
+・Range
+・Move
+・Luck
+・HIt
+・Cost
+GrowData											…　
+・Id
+・UnitId
+・
+SkillData											…　
+・Id
+・SkillCategory											
+・
+・
+UnitSkillData											
+・Id
+・UnitId
+・SkillId
+ItemData												
+・Id
+・Name													
+・ItemCategory											
+
+UnitItemData											
+・Id
+・UnitId
+・ItemId
+StageData												
+・StageId
+・Name
+・Width
+・Height
+・Introduction
+・ConstitutionJson
+StageClearData											
+・Id
+・StageId
+UnitStageStatusData										
+・Id
+・StageId
+・UnitId
+・AiCategory
+・PositionId
+UnitStageSkillData										
+・Id
+・StageId
+・UnitId
+・SkillId
+UnitStageItemData										
+・Id
+・StageId
+・UnitId
+・ItemId
+EventData												
+・Id
+・EventCategory											
+・EventDetail
+・MaxCount
+StageGrantedData										
+・Id
+・GrantCategory											
+・GrantIconPath
+・StatusGrantedParamId
+StatusGrantedParamData									
+・Id
+・Name
+・Hp
+・Mp
+・Attack
+・Defence
+・Range
+・Move
+・Luck
+・HIt
+・Avoid
+StageEventData											
+・Id
+・StageId
+・EventId
+・TriggerCategory										
+・TriggerDetail
+ScenarioEventData										
+・Id
+・ScenarioId
+・EventId
+StageHistorydData										
+・Id
+・StageId
+・PlayCount
+・ClearCount
+・ClearFlg
+ContinueStageData										
+・Id
+・StageId
+・CreateDate
+ScenarioData											
+・Id
+・FilePath
+・ScenarioCategory
+ConfigData												
+・Id
+・Volume
+・AutoControllFlg
+・GameSpeed
+・TextSpeed
+MasterTabldeData										
+・Id
+・CodeId
+・Category
+・SortNo
+
+書留タスク
+Editor
+□テーブル管理コード
+・全てのテーブルを再生成する
+・全てのテーブルに対して存在チェックをかける
+・テーブル削除SQL
+・csv出力/インポート

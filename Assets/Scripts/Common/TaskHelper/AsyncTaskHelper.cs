@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+//using System.Threading.Tasks;
 using AloneWar.Common.Extensions;
 using UnityEngine;
 namespace AloneWar.Common.TaskHelper
 {
     /// <summary>
     /// 非同期実行するタスクのヘルパークラス
+    /// 非同期処理を1箇所に集めるだけ
     /// </summary>
     public class AsyncTaskHelper
     {
@@ -63,27 +64,39 @@ namespace AloneWar.Common.TaskHelper
         /// <summary>
         /// 開始~メインタスク実行
         /// </summary>
-        public void TaskRun()
-        {
-            this.StartTask.SafeCall();
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-            sw.Start();
-            Task.Factory.StartNew(this.MainTask);
-            sw.Stop();
-            Debug.Log(string.Format("{0}:{1}", this.TaskTitle, sw.ElapsedMilliseconds));
-        }
+        //public void TaskRun()
+        //{
+        //    this.StartTask.SafeCall();
+        //    System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        //    sw.Start();
+        //    Task.Factory.StartNew(this.MainTask);
+        //    sw.Stop();
+        //    //Debug.Log(string.Format("{0}:{1}", this.TaskTitle, sw.ElapsedMilliseconds));
+        //}
 
-        /// <summary>
-        /// 開始~終了タスク実行
-        /// </summary>
-        async public void TaskRunAwait()
-        {
-            this.StartTask.SafeCall();
-            await Task.Run(() =>
-            {
-                this.MainTask.SafeCall();
-            });
-            this.EndTask.SafeCall();
-        }
+        ///// <summary>
+        ///// 開始~終了タスク実行
+        ///// </summary>
+        //async public void TaskRunAwait()
+        //{
+        //    this.StartTask.SafeCall();
+        //    await Task.Run(() =>
+        //    {
+        //        this.MainTask.SafeCall();
+        //    });
+        //    this.EndTask.SafeCall();
+        //}
+
+        //async public Task<T> TaskRunAwait<T>(Func<T> function)
+        //{
+        //    this.StartTask.SafeCall();
+        //    //Task<T> task = new Task<T>(function);
+        //    //task.Start();
+        //    T result = await Task<T>.Run(() =>
+        //    {
+        //        return function();
+        //    });
+        //    return result;
+        //}
     }
 }

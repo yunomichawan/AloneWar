@@ -1,0 +1,108 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using AloneWar.Common.Component;
+using UnityEngine;
+using AloneWar.Stage.Component;
+using AloneWar.Stage.FieldObject;
+using UnityEngine.SceneManagement;
+using AloneWar.DataObject.Json.Helper;
+
+namespace AloneWar.Stage
+{
+    /// <summary>
+    /// ステージ全体の進行、データを管理
+    /// </summary>
+    public class StageManager : SingletonComponent<StageManager>
+    {
+
+        #region poroperty
+
+        public StageInformation StageInformation { get; set; }
+
+        #endregion
+
+        void Start()
+        {
+
+        }
+
+        public void StageInit()
+        {
+            // Field
+
+        }
+
+        /// <summary>
+        /// 座標Id
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public int GetPositionId(int x, int y)
+        {
+            return this.StageInformation.StageTableData.Width * y + x;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public Transform GetPositionTransformFromId(int positionId)
+        {
+            int x = positionId % this.StageInformation.StageTableData.Width;
+            int y = positionId / this.StageInformation.StageTableData.Width;
+
+        }
+
+        public Transform GetPositionTransformFromXY(int x, int y)
+        {
+            return new Vector3((float)(x * 1.0f), y * 1.0f);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public class StageBuilder
+        {
+            public StageInformation StageInformation { get; set; }
+
+            public StageBuilder(StageInformation stageInformation)
+            {
+                this.StageInformation = stageInformation;
+            }
+
+            public void CreateStage()
+            {
+                this.CreateField(this.StageInformation.StageTableData.ConstitutionJson);
+                
+            }
+
+            private void CreateField(string constitutionJson)
+            {
+                List<MassStatus> massStatusList = JsonUtility.FromJson<JsonSerialization<MassStatus>>(constitutionJson).ToList();
+                massStatusList.ForEach(m =>
+                {
+                    GameObject massObject = new GameObject(m.PositionId.ToString());
+                    MassComponent massComponent = massObject.AddComponent<MassComponent>();
+                    massComponent.MassStatus = m;
+                    Instantiate(massObject, Vector3.zero, Quaternion.identity);
+
+                });
+            }
+
+            private void SetUnitPosition()
+            {
+
+            }
+
+            private void SetStageEvent()
+            {
+
+            }
+        }
+
+    }
+}

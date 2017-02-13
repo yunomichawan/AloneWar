@@ -1,0 +1,205 @@
+﻿using AloneWar.Common;
+using AloneWar.Common.Component;
+using AloneWar.DataObject.Json.Helper;
+using AloneWar.DataObject.Sqlite.SqliteObject;
+using AloneWar.Stage.Component;
+using AloneWar.Stage.FieldObject;
+using AloneWar.Unit.Component;
+using AloneWar.Unit.Status;
+using AloneWar.Common.TaskHelper;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using AloneWar.Stage.Event;
+using AloneWar.Stage.Event.Base;
+
+namespace AloneWar.Stage
+{
+    /// <summary>
+    /// ステージ全体の進行、データを管理
+    /// </summary>
+    public class StageManager : SingletonComponent<StageManager>
+    {
+
+        #region poroperty
+
+        public StageInformation StageInformation { get; set; }
+
+        #endregion
+
+        #region inspector property
+
+        public TunrProgression tunrProgression;
+
+        public Transform unitParent;
+
+        public Transform stageParent;
+
+        #endregion
+
+        void Start()
+        {
+
+        }
+
+        public void StageInit()
+        {
+            // Field
+
+        }
+
+        /// <summary>
+        /// 座標Id
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public int GetPositionId(int x, int y)
+        {
+            return this.StageInformation.StageTableData.Width * y + x;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public Vector3 GetPositionTransformFromId(int positionId)
+        {
+            int x = positionId % this.StageInformation.StageTableData.Width;
+            int y = positionId / this.StageInformation.StageTableData.Width;
+            return this.GetPositionTransformFromXY(x, y);
+        }
+
+        private Vector3 GetPositionTransformFromXY(int x, int y)
+        {
+            float massScale = 1.0f;
+            return new Vector3((float)(x * massScale), (float)(y * massScale));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public class StageBuilder
+        {
+            public StageInformation StageInformation { get; set; }
+
+            public Transform UnitParent { get; set; }
+
+            public Transform StageParent { get; set; }
+
+            public StageBuilder(StageInformation stageInformation)
+            {
+                this.StageInformation = stageInformation;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public void CreateStage()
+            {
+                this.CreateField(this.StageInformation.StageTableData.ConstitutionJson);
+                this.SetUnitPosition();
+                this.SetStageEvent();
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="constitutionJson"></param>
+            private void CreateField(string constitutionJson)
+            {
+                List<MassStatus> massStatusList = JsonUtility.FromJson<JsonSerialization<MassStatus>>(constitutionJson).ToList();
+                massStatusList.ForEach(m =>
+                {
+                    this.CreateStageObject<MassComponent, MassStatus, MassEvent>(null, m, (c) =>
+                    {
+                        this.StageInformation.MassComponentList.Add(c.PositionId, c);
+                        
+                    });
+                });
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            private void SetUnitPosition()
+            {
+                this.StageInformation.UnitSubStatusList.ForEach(u =>
+                {
+                    GameObject prefab = ResourceManager.Load<GameObject>(u.BaseStatus.PrefabPath, ResourceCategory.UnitPrefab);
+                    this.CreateStageObject<UnitSubComponent, UnitObjectStatus<UnitSubStatusData>, UnitSubEvent>(prefab, u, (c) =>
+                    {
+                        this.StageInformation.UnitSubComponentList.Add(c.PositionId, c);
+                    });
+                });
+
+                this.CreateStageObject<UnitMainComponent, UnitObjectStatus<UnitMainStatusData>, UnitMainEvent>(null, this.StageInformation.UnitMainStatus, (c) =>
+                {
+                    this.StageInformation.UnitMainComponent = c;
+                    
+                });
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <typeparam name="ParentT">BaseStageObjectを継承したクラス型</typeparam>
+            /// <typeparam name="ChildT">ParentTが継承するUnitBaseComponent<T, EventT>のクラス型</typeparam>
+            /// <typeparam name="EventT">ParentTが継承するUnitBaseComponent<T, EventT>のクラス型</typeparam>
+            /// <param name="prefab"></param>
+            /// <param name="attachChild"></param>
+            /// <param name="callback"></param>
+            private void CreateStageObject<ParentT, ChildT, EventT>(GameObject prefab, ChildT attachChild, Action<ParentT> callback)
+                where ParentT : BaseStageObject<ChildT, EventT>
+                where EventT : BaseStageEvent
+            {
+                GameObject stageObject = prefab ?? new GameObject();
+                ParentT attachParent = stageObject.AddComponent<ParentT>();
+                attachParent.ComponentMember = attachChild;
+                stageObject.name = attachParent.StageObjectId.ToString();
+                Instantiate(stageObject, StageManager.Instance.GetPositionTransformFromId(attachParent.PositionId), Quaternion.identity);
+                
+                if (callback != null)
+                {
+                    callback(attachParent);
+                }
+            }
+
+            /// <summary>
+            /// イベントは後付？もしくは生成と同タイミング？
+            /// </summary>
+            private void SetStageEvent()
+            {
+                foreach (StageEventInformation stageEventInformation in this.StageInformation.StageEventTableDataList)
+                {
+                    EventTriggerCategory trigger = (EventTriggerCategory)stageEventInformation.StageEventTableData.TriggerCategory;
+                    switch (trigger)
+                    {
+                        case EventTriggerCategory.AreaStop:
+                            
+                            break;
+                        case EventTriggerCategory.PositionStop:
+                            break;
+                        case EventTriggerCategory.TargetUnitKill:
+                            break;
+                        case EventTriggerCategory.UnitKill:
+                            break;
+                        case EventTriggerCategory.TurnOver:
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            private void SetClearStageDetail()
+            {
+
+            }
+        }
+
+    }
+}

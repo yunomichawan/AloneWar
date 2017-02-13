@@ -20,23 +20,20 @@ namespace AloneWar.Common.Bind
         public static List<T> DataTableToObjectList(DataTable table)
         {
             List<T> objectList = new List<T>();
-            object lockObj = new object();
-            AsyncTaskHelper helper = new AsyncTaskHelper(() => {
-                foreach (DataRow row in table.Rows)
-                {
-                    T obj = (T)Activator.CreateInstance(typeof(T), new object[] { });
-                    DataRowToObject(row, obj);
-                    lock (lockObj)
-                    {
-                        objectList.Add(obj);
-                    }
-                }
-            });
-            helper.TaskRun();
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+            foreach (DataRow row in table.Rows)
+            {
+                T obj = (T)Activator.CreateInstance(typeof(T), new object[] { });
+                DataRowToObject(row, obj);
+                objectList.Add(obj);
+            }
 
+            sw.Stop();
+            Console.WriteLine("async end" + sw.Elapsed.ToString());
             return objectList;
         }
-
+        
         /// <summary>
         /// データ行からクラスに変換
         /// Conversion from the data line to the class
@@ -47,14 +44,13 @@ namespace AloneWar.Common.Bind
         {
             Type type = obj.GetType();
             PropertyInfo[] propertyInfoArray = type.GetProperties();
-
             foreach (PropertyInfo propertyInfo in propertyInfoArray)
             {
-                object dataObject = dataRow[propertyInfo.Name];
+                object dataObject = dataRow[type.Name + "." + propertyInfo.Name];
                 SetPropertyValue(propertyInfo, obj, dataObject);
             }
         }
-
+        
         /// <summary>
         /// 指定したプロパティに値をセットする
         /// </summary>

@@ -1,10 +1,11 @@
-﻿using System;
+﻿using AloneWar.Common.TaskHelper;
+using System;
 using UnityEngine;
 
 namespace AloneWar.Common.Component
 {
 
-    public class SingletonComponent<T> : MonoBehaviour where T : MonoBehaviour
+    public class SingletonComponent<T> : TaskCoroutineBeahavior where T : MonoBehaviour
     {
         private static T instance;
         public static T Instance

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
-using AloneWar.DataObject.Sqlite.SqliteObject;
+using AloneWar.DataObject.Sqlite.SqliteObject.Master;
+using AloneWar.DataObject.Sqlite.SqliteObject.Transaction;
+using AloneWar.DataObject;
+using AloneWar.Stage.Event.EventObject;
 
 namespace AloneWar.Unit.Component
 {
@@ -13,6 +15,5 @@ namespace AloneWar.Unit.Component
     /// </summary>
     public class UnitSubComponent : UnitBaseComponent<UnitSubStatusData>
     {
-
     }
 }

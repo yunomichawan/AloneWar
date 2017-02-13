@@ -52,9 +52,6 @@
     <Reference Include="UnityEngine">
       <HintPath>Library\UnityAssemblies\UnityEngine.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.Advertisements">
-      <HintPath>Library\UnityAssemblies\UnityEngine.Advertisements.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>Library\UnityAssemblies\UnityEngine.UI.dll</HintPath>
     </Reference>
@@ -70,9 +67,6 @@
     <Reference Include="UnityEngine.HoloLens">
       <HintPath>Library\UnityAssemblies\UnityEngine.HoloLens.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.Purchasing">
-      <HintPath>Library\UnityAssemblies\UnityEngine.Purchasing.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine.VR">
       <HintPath>Library\UnityAssemblies\UnityEngine.VR.dll</HintPath>
     </Reference>
@@ -82,48 +76,91 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Properties\AssemblyInfo.cs" />
+    <Compile Include="Assets\Scripts\Common\AloneWarConst.cs" />
     <Compile Include="Assets\Scripts\Common\AloneWarEnum.cs" />
+    <Compile Include="Assets\Scripts\Common\AloneWarMasterData.cs" />
     <Compile Include="Assets\Scripts\Common\Bind\BinderDelegate.cs" />
     <Compile Include="Assets\Scripts\Common\Bind\DataBinding.cs" />
     <Compile Include="Assets\Scripts\Common\Bind\GuiDataBinding.cs" />
+    <Compile Include="Assets\Scripts\Common\Component\SceneCommonComponent.cs" />
     <Compile Include="Assets\Scripts\Common\Component\SingletonComponent.cs" />
     <Compile Include="Assets\Scripts\Common\Extensions\CommonExtensions.cs" />
     <Compile Include="Assets\Scripts\Common\Extensions\UnityExtensions.cs" />
+    <Compile Include="Assets\Scripts\Common\ResourceManager.cs" />
     <Compile Include="Assets\Scripts\Common\TaskHelper\AsyncTaskHelper.cs" />
     <Compile Include="Assets\Scripts\Common\TaskHelper\TaskCoroutineBeahavior.cs" />
+    <Compile Include="Assets\Scripts\DataObject\ForeignKeyObject.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Json\Helper\JsonSerialization.cs" />
     <Compile Include="Assets\Scripts\DataObject\Sqlite\Helper\DataTable.cs" />
     <Compile Include="Assets\Scripts\DataObject\Sqlite\Helper\SqliteDatabase.cs" />
     <Compile Include="Assets\Scripts\DataObject\Sqlite\Helper\SqliteHelper.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\Helper\SqliteQueryBuilder.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\Service\LoadStatusService.cs" />
     <Compile Include="Assets\Scripts\DataObject\Sqlite\Service\StageInformationService.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\Service\TableSupportService.cs" />
     <Compile Include="Assets\Scripts\DataObject\Sqlite\Service\UnitStatusService.cs" />
     <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteAttributes\DataAccessAttribute.cs" />
     <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteAttributes\NullAbleAttribute.cs" />
     <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteAttributes\PrimaryKeyAttribute.cs" />
     <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteAttributes\SqlitePropertyAttribute.cs" />
     <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Base\IDateData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Base\IDefaultSort.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Base\IForeignKey.cs" />
     <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Base\SqliteBaseData.cs" />
-    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\ConfigData.cs" />
-    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\ContinueStageData.cs" />
-    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\GrowTableData.cs" />
-    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\ItemData.cs" />
-    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\MasterData.cs" />
-    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\RUnitItemData.cs" />
-    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\RUnitSkillData.cs" />
-    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\SaveData.cs" />
-    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\ScenarioTableData.cs" />
-    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\SkillData.cs" />
-    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\StageClearTableData.cs" />
-    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\StageEventTableData.cs" />
-    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\StageTableData.cs" />
-    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\UnitBaseStatusData.cs" />
-    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\UnitMainStatusData.cs" />
-    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\UnitStageStatusData.cs" />
-    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\UnitSubStatusData.cs" />
-    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\UnitUsedHistoryData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\EventData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\EventTriggerData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\ExperienceData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\ItemData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\MasterCodeData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\ResourcesLabelData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\ResourcesPathData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\ScenarioData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\ScenarioEventData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\ScenarioEventTriggerData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\SkillData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\SkillLevelData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\StageClearTriggerData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\StageData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\StageEventTriggerData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\StatusGrantedParamData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\UnitAssetData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\UnitBaseStatusData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\UnitGrowMasterData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\UnitMainStatusData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\UnitMaxStatusData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\UnitStageItemData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\UnitStagePlacementData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\UnitStageSkillData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\UnitStageStatusData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Master\UnitSubStatusData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Transaction\EventStatusData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Transaction\GameConfigData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Transaction\HaveItemData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Transaction\HaveSkillData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Transaction\HaveSubUnitData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Transaction\SaveData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Transaction\StageContinueData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Transaction\StageHistorydData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Transaction\UnitItemData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Transaction\UnitSkillData.cs" />
+    <Compile Include="Assets\Scripts\DataObject\Sqlite\SqliteObject\Transaction\UnitUsedHistoryData.cs" />
+    <Compile Include="Assets\Scripts\Scene\Title.cs" />
+    <Compile Include="Assets\Scripts\Stage\Component\BaseStageObject.cs" />
     <Compile Include="Assets\Scripts\Stage\Component\MassComponent.cs" />
+    <Compile Include="Assets\Scripts\Stage\Event\EventObject\Base\BaseStageEvent.cs" />
+    <Compile Include="Assets\Scripts\Stage\Event\EventObject\MassEvent.cs" />
+    <Compile Include="Assets\Scripts\Stage\Event\EventObject\UnitEvent.cs" />
+    <Compile Include="Assets\Scripts\Stage\Event\Sender\Base\BaseEventSender.cs" />
+    <Compile Include="Assets\Scripts\Stage\Event\Sender\EventSenderConverter.cs" />
+    <Compile Include="Assets\Scripts\Stage\Event\Sender\MassEventSender.cs" />
+    <Compile Include="Assets\Scripts\Stage\Event\Sender\UnitEventSender.cs" />
     <Compile Include="Assets\Scripts\Stage\FieldObject\MassStatus.cs" />
+    <Compile Include="Assets\Scripts\Stage\IStagePosition.cs" />
+    <Compile Include="Assets\Scripts\Stage\StageEventBuilder.cs" />
     <Compile Include="Assets\Scripts\Stage\StageInformation.cs" />
     <Compile Include="Assets\Scripts\Stage\StageManager.cs" />
+    <Compile Include="Assets\Scripts\Stage\StageObjectController.cs" />
+    <Compile Include="Assets\Scripts\Stage\TunrProgression.cs" />
     <Compile Include="Assets\Scripts\UI\Component\LabelResourceText.cs" />
     <Compile Include="Assets\Scripts\Unit\Component\UnitBaseComponent.cs" />
     <Compile Include="Assets\Scripts\Unit\Component\UnitMainComponent.cs" />
@@ -132,6 +169,7 @@
     <Compile Include="Assets\Scripts\Unit\Status\UnitObjectStatus.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\EventTriggerMemo.txt" />
     <None Include="Assets\ProjectMemo.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
