@@ -23,12 +23,12 @@ namespace AloneWar.Stage
 
         }
 
-        public void UpdateObjectPosition(BaseStageObject baseStageObject, int positionId)
-        {
-            baseStageObject.BeforePositionId = baseStageObject.PositionId;
-            baseStageObject.PositionId = positionId;
+        //public void UpdateObjectPosition(BaseStageObject baseStageObject, int positionId)
+        //{
+        //    baseStageObject.BeforePositionId = baseStageObject.PositionId;
+        //    baseStageObject.PositionId = positionId;
 
-        }
+        //}
 
     }
 }

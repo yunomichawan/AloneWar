@@ -76,6 +76,31 @@ namespace AloneWar.Stage
         public Dictionary<int, UnitSubComponent> UnitSubComponentList { get { return this.unitSubComponentList; } set { this.unitSubComponentList = value; } }
         private Dictionary<int, UnitSubComponent> unitSubComponentList = new Dictionary<int, UnitSubComponent>();
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="positionIdArray"></param>
+        /// <returns></returns>
+        public UnitSummaryComponent SearchUnitComponent(List<int> positionIdArray)
+        {
+            UnitSummaryComponent unitSummaryComponent = new UnitSummaryComponent();
+
+            foreach (int positionId in positionIdArray)
+            {
+                if (this.UnitMainComponent.UnitObjectStatus.StageStatus.PositionId.Equals(positionId))
+                {
+                    unitSummaryComponent.UnitMainComponent = this.UnitMainComponent;
+                }
+
+                if (this.UnitSubComponentList.ContainsKey(positionId))
+                {
+                    unitSummaryComponent.UnitSubComponentList.Add(this.UnitSubComponentList[positionId]);
+                }
+            }
+
+            return unitSummaryComponent;
+        }
+
         #endregion
 
         #region Method

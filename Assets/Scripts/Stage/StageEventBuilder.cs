@@ -8,6 +8,7 @@ using AloneWar.DataObject.Sqlite.SqliteObject.Master;
 using AloneWar.DataObject.Sqlite.SqliteObject.Transaction;
 using AloneWar.Common;
 using AloneWar.Stage.Event.Sender;
+using UnityEngine;
 
 namespace AloneWar.Stage
 {

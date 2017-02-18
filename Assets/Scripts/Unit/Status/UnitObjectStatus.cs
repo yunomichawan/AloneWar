@@ -5,6 +5,7 @@ using System.Text;
 using AloneWar.DataObject.Sqlite.SqliteObject;
 using AloneWar.DataObject.Sqlite.SqliteObject.Base;
 using UnityEngine;
+using AloneWar.Common;
 
 namespace AloneWar.Unit.Status
 {
@@ -17,6 +18,34 @@ namespace AloneWar.Unit.Status
     {
         public T UnitStatus { get; set; }
 
+        public int DamageHp
+        {
+            get
+            {
+                return this.BaseStatus.Hit - this.StageStatus.Damage;
+            }
+        }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public CommandCategory MainCommand
+        {
+            get
+            {
+                return this.BaseStatus.MainCommand;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public CommandCategory SubCommand
+        {
+            get
+            {
+                return this.BaseStatus.SubCommand;
+            }
+        }
     }
 }

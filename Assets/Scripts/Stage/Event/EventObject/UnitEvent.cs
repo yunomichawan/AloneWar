@@ -27,6 +27,8 @@ namespace AloneWar.Stage.Event.EventObject
 
         public override IEnumerator EventTask()
         {
+
+            base.EventTask();
             yield return null;
         }
     }

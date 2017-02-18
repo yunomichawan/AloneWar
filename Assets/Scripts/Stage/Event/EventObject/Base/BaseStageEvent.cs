@@ -72,5 +72,23 @@ namespace AloneWar.Stage.Event.EventObject.Base
             this.StageEventInformation.EventStatusData.Count++;
             yield break;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Action EventAfterCallback { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Action EventBeforeCallback { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void EnqueueEventTask()
+        {
+            StageManager.Instance.stageEventBuilder.TaskQueue.Enqueue(this.EventTask);
+        }
     }
 }

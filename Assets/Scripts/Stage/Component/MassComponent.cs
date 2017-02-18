@@ -23,5 +23,30 @@ namespace AloneWar.Stage.Component
         public override string Area { get { return this.MassStatus.Area; } }
 
         public MassStatus MassStatus { get; set; }
+
+        public List<PositionEvent> CloseEventList { get { return this.closeEventList; } set { this.closeEventList = value; } }
+        private List<PositionEvent> closeEventList = new List<PositionEvent>();
+
+        public bool IsClose
+        {
+            get
+            {
+                return this.MassStatus.IsClose;
+            }
+            set
+            {
+                this.MassStatus.IsClose = value;
+                if (this.MassStatus.IsClose)
+                {
+                    this.CloseEventList.ForEach(m =>
+                    {
+                        if (m.VaildFlg)
+                        {
+                            m.EnqueueEventTask();
+                        }
+                    });
+                }
+            }
+        }
     }
 }

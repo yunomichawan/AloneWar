@@ -17,6 +17,12 @@ namespace AloneWar.Unit.Component
     /// </summary>
     public class UnitMainComponent : UnitBaseComponent<UnitMainStatusData>
     {
-
+        public override int SubRange
+        {
+            get
+            {
+                return this.UnitObjectStatus.UnitStatus.SummonRange;
+            }
+        }
     }
 }

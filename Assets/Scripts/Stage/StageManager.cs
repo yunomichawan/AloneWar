@@ -1,7 +1,9 @@
 ﻿using AloneWar.Common;
+using AloneWar.Common.Extensions;
 using AloneWar.Common.Component;
 using AloneWar.Common.TaskHelper;
 using AloneWar.DataObject.Json.Helper;
+using AloneWar.DataObject.Sqlite.SqliteObject.Base;
 using AloneWar.DataObject.Sqlite.SqliteObject.Master;
 using AloneWar.DataObject.Sqlite.SqliteObject.Transaction;
 using AloneWar.Stage.Component;
@@ -17,26 +19,38 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using UnityEngine;
+using AloneWar.Stage.Controller;
 
 namespace AloneWar.Stage
 {
     /// <summary>
     /// ステージ全体の進行、データを管理
     /// </summary>
-    public class StageManager : SingletonComponent<StageManager>
+    public class StageManager : SingletonTaskComponent<StageManager>
     {
 
         #region poroperty
 
         public StageInformation StageInformation { get; set; }
 
+        /// <summary>
+        /// 現在状況をメモ書き程度で保持(デバッグ用？)
+        /// </summary>
+        public string StageStatus { get; set; }
+
         #endregion
 
         #region inspector property
 
+        /*
+         タスク処理を1箇所にまとめるためinspectorで管理
+         */
+
         public TunrProgression tunrProgression;
 
         public StageEventBuilder stageEventBuilder;
+
+        public StageObjectController stageObjectController;
 
         /// <summary>
         /// 親
@@ -57,7 +71,7 @@ namespace AloneWar.Stage
                 // イベントタスクを優先
                 if (this.stageEventBuilder.TaskQueue.Count > 0)
                 {
-                    yield return StartCoroutine(this.stageEventBuilder.TaskRun());
+                    yield return StartCoroutine(this.TaskRun());
                 }
                 // 通常タスク
                 else if (this.TaskQueue.Count > 0)
@@ -78,6 +92,20 @@ namespace AloneWar.Stage
             // Field
             StageBuilder stageBuilder = new StageBuilder(this.StageInformation, this.unitParent, this.stageParent);
             stageBuilder.CreateStage();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="positionId"></param>
+        public void UnitRangeInit(int positionId)
+        {
+            this.StageInformation.UnitSubComponentList.Values.ToList().ForEach(u =>
+            {
+                // 移動が行われた場合、範囲を再設定
+                u.UnitRange.ResetRange(positionId);
+            });
+            this.StageInformation.UnitMainComponent.UnitRange.ResetRange(positionId);
         }
 
         /// <summary>
@@ -140,20 +168,36 @@ namespace AloneWar.Stage
                 this.StageInformation.UnitSubStatusList.ForEach(u =>
                 {
                     GameObject prefab = new GameObject();// ResourceManager.Load<GameObject>(u.BaseStatus.AssetId, ResourceCategory.UnitPrefab);
+                    EditorDebug.DebugAlert("prefab");
                     this.CreateStageObject<UnitSubComponent>(prefab, c =>
                     {
                         this.StageInformation.UnitSubComponentList.Add(c.PositionId, c);
-                        c.transform.parent = this.UnitParent;
-                        c.UnitObjectStatus = u;
+                        this.SetUnitPropety<UnitSubStatusData>(c, u);
                     });
                 });
 
-                this.CreateStageObject<UnitMainComponent>(null, c =>
+                GameObject mainUnit = new GameObject();// ResourceManager.Load<GameObject>(u.BaseStatus.AssetId, ResourceCategory.UnitPrefab);
+                EditorDebug.DebugAlert("prefab");
+                this.CreateStageObject<UnitMainComponent>(mainUnit, c =>
                 {
                     this.StageInformation.UnitMainComponent = c;
-                    c.transform.parent = this.UnitParent;
-                    c.UnitObjectStatus = this.StageInformation.UnitMainStatus;
+                    this.SetUnitPropety<UnitMainStatusData>(c, this.StageInformation.UnitMainStatus);
                 });
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <typeparam name="T"></typeparam>
+            /// <param name="unit"></param>
+            /// <param name="status"></param>
+            private void SetUnitPropety<T>(UnitBaseComponent<T> unit, UnitObjectStatus<T> status) where T : SqliteBaseData
+            {
+                unit.transform.parent = this.UnitParent;
+                unit.UnitObjectStatus = status;
+                unit.UnitCommandController = new UnitCommandController<T>(unit);
+                unit.UnitRange = new UnitRange<T>(unit);
+                unit.UnitRange.SetRange(unit.MainRange, unit.SubRange, unit.UnitObjectStatus.MainCommand, unit.UnitObjectStatus.SubCommand);
             }
 
             /// <summary>
@@ -198,7 +242,7 @@ namespace AloneWar.Stage
                         case EventTriggerCategory.PositionStop:
                             // set trigger To unit command
                             break;
-                        case EventTriggerCategory.PositionStopSpecificUnit:
+                        case EventTriggerCategory.PositionStopUniqueUnit:
                             break;
                         case EventTriggerCategory.PositionClose:
                             // set trigger To mass
@@ -206,8 +250,8 @@ namespace AloneWar.Stage
                             positionIdList.ForEach(p =>
                             {
                                 MassComponent massComponent = this.StageInformation.MassComponentList[p];
-                                MassEvent massEvent = new MassEvent(stageEventInformation, massComponent);
-                                massComponent.MassStatus.MassEventList.Add(massEvent);
+                                PositionEvent massEvent = new PositionEvent(stageEventInformation, massComponent);
+                                massComponent.CloseEventList.Add(massEvent);
                             });
                             break;
                         case EventTriggerCategory.TargetUnitKill:

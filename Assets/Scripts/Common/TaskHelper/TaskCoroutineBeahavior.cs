@@ -25,6 +25,11 @@ namespace AloneWar.Common.TaskHelper
         /// </summary>
         public bool TaskCompleted { get; set; }
 
+        /// <summary>
+        /// スキップ
+        /// </summary>
+        public bool IsSkip { get; set; }
+
         #endregion
 
         /// <summary>
@@ -34,6 +39,7 @@ namespace AloneWar.Common.TaskHelper
         {
             this.TaskQueue = new Queue<Func<IEnumerator>>();
             this.TaskCompleted = false;
+            this.IsSkip = false;
         }
 
         /// <summary>
@@ -42,6 +48,7 @@ namespace AloneWar.Common.TaskHelper
         public IEnumerator TaskRun()
         {
             this.TaskCompleted = false;
+            this.IsSkip = false;
             yield return StartCoroutine(this.TaskStart());
         }
 
@@ -56,14 +63,28 @@ namespace AloneWar.Common.TaskHelper
                 // タスク取り出し
                 Func<IEnumerator> task = this.TaskQueue.Dequeue();
                 yield return StartCoroutine(task());
+                if (this.IsSkip)
+                {
+                    this.TaskEnd();
+                    break;
+                }
                 // タスクが無くなり次第終了
                 if (this.TaskQueue.Count.Equals(0))
                 {
-                    this.TaskCompleted = true;
+                    this.TaskEnd();
                     break;
                 }
             }
         }
 
+        /// <summary>
+        /// タスク終了
+        /// </summary>
+        private void TaskEnd()
+        {
+            this.TaskCompleted = true;
+            this.IsSkip = false;
+            this.TaskQueue = new Queue<Func<IEnumerator>>();
+        }
     }
 }

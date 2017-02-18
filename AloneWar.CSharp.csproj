@@ -76,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Properties\AssemblyInfo.cs" />
+    <Compile Include="Assets\Scripts\Battle\PredictionBattleResult.cs" />
     <Compile Include="Assets\Scripts\Common\AloneWarConst.cs" />
     <Compile Include="Assets\Scripts\Common\AloneWarEnum.cs" />
     <Compile Include="Assets\Scripts\Common\AloneWarMasterData.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="Assets\Scripts\Common\Bind\GuiDataBinding.cs" />
     <Compile Include="Assets\Scripts\Common\Component\SceneCommonComponent.cs" />
     <Compile Include="Assets\Scripts\Common\Component\SingletonComponent.cs" />
+    <Compile Include="Assets\Scripts\Common\Component\SingletonTaskComponent.cs" />
     <Compile Include="Assets\Scripts\Common\Extensions\CommonExtensions.cs" />
     <Compile Include="Assets\Scripts\Common\Extensions\UnityExtensions.cs" />
     <Compile Include="Assets\Scripts\Common\ResourceManager.cs" />
@@ -147,12 +149,19 @@
     <Compile Include="Assets\Scripts\Scene\Title.cs" />
     <Compile Include="Assets\Scripts\Stage\Component\BaseStageObject.cs" />
     <Compile Include="Assets\Scripts\Stage\Component\MassComponent.cs" />
+    <Compile Include="Assets\Scripts\Stage\Controller\RangeCommand.cs" />
+    <Compile Include="Assets\Scripts\Stage\Controller\StageObjectController.cs" />
+    <Compile Include="Assets\Scripts\Stage\Controller\UnitAIController.cs" />
+    <Compile Include="Assets\Scripts\Stage\Controller\UnitCommandController.cs" />
+    <Compile Include="Assets\Scripts\Stage\Controller\UnitCommandHistory.cs" />
     <Compile Include="Assets\Scripts\Stage\Event\EventObject\Base\BaseStageEvent.cs" />
     <Compile Include="Assets\Scripts\Stage\Event\EventObject\MassEvent.cs" />
+    <Compile Include="Assets\Scripts\Stage\Event\EventObject\PositionEvent.cs" />
     <Compile Include="Assets\Scripts\Stage\Event\EventObject\UnitEvent.cs" />
     <Compile Include="Assets\Scripts\Stage\Event\Sender\Base\BaseEventSender.cs" />
     <Compile Include="Assets\Scripts\Stage\Event\Sender\EventSenderConverter.cs" />
     <Compile Include="Assets\Scripts\Stage\Event\Sender\MassEventSender.cs" />
+    <Compile Include="Assets\Scripts\Stage\Event\Sender\PositionEventSender.cs" />
     <Compile Include="Assets\Scripts\Stage\Event\Sender\UnitEventSender.cs" />
     <Compile Include="Assets\Scripts\Stage\FieldObject\MassStatus.cs" />
     <Compile Include="Assets\Scripts\Stage\IStagePosition.cs" />
@@ -161,12 +170,17 @@
     <Compile Include="Assets\Scripts\Stage\StageManager.cs" />
     <Compile Include="Assets\Scripts\Stage\StageObjectController.cs" />
     <Compile Include="Assets\Scripts\Stage\TunrProgression.cs" />
+    <Compile Include="Assets\Scripts\UI\Common\ListMenu\Base\BaseListMenu.cs" />
     <Compile Include="Assets\Scripts\UI\Component\LabelResourceText.cs" />
+    <Compile Include="Assets\Scripts\UI\Stage\UIUnitCommand.cs" />
     <Compile Include="Assets\Scripts\Unit\Component\UnitBaseComponent.cs" />
     <Compile Include="Assets\Scripts\Unit\Component\UnitMainComponent.cs" />
     <Compile Include="Assets\Scripts\Unit\Component\UnitSubComponent.cs" />
+    <Compile Include="Assets\Scripts\Unit\Component\UnitSummaryComponent.cs" />
     <Compile Include="Assets\Scripts\Unit\Status\UnitBaseStatus.cs" />
     <Compile Include="Assets\Scripts\Unit\Status\UnitObjectStatus.cs" />
+    <Compile Include="Assets\Scripts\Unit\UnitAI\Base\UnitBaseAI.cs" />
+    <Compile Include="Assets\Scripts\Unit\UnitAI\UnitWaitAI.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\EventTriggerMemo.txt" />
