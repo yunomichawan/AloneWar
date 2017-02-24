@@ -2,7 +2,6 @@
 using AloneWar.Common;
 using AloneWar.DataObject.Sqlite.SqliteObject.Base;
 using AloneWar.DataObject.Sqlite.SqliteAttributes;
-using AloneWar.Common;
 
 namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
 {
@@ -21,16 +20,13 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
         public int UnitId { get; set; }
 
         [SqliteProperty]
-        public int Level { get; set; }
-
-        [SqliteProperty]
-        public int AiCategory { get; set; }
-
-        [SqliteProperty]
         public int PositionId { get; set; }
 
         [SqliteProperty]
         public int UnitSideCategory { get; set; }
+
+        [SqliteProperty]
+        public int Damage { get; set; }
 
         [SqliteProperty]
         public bool IsEvent { get; set; }
@@ -44,6 +40,11 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
 
         public UnitSideCategory UnitSide { get { return (UnitSideCategory)this.UnitSideCategory; } }
 
+        public bool Wait { get; set; }
+
+        public int BeforePositionId { get; set; }
+
         #endregion
+
     }
 }

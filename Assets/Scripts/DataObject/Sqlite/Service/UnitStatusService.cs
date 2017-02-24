@@ -14,56 +14,19 @@ namespace AloneWar.DataObject.Sqlite.Service
     /// UnitStatusをDBから取得するクラス
     /// </summary>
     /// <typeparam name="T">UnitMainStatusData or UnitSubStatusData</typeparam>
-    public class UnitStatusService<T> where T : SqliteBaseData
+    public class UnitStatusService
     {
         /// <summary>
-        /// データを集めて変換するクラス
+        /// まとめ
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        private class UnitSqliteSummary
+        private class UnitMaterialSummary
         {
-            public List<T> UnitStatusList { get; set; }
+            public List<UnitAssetData> UnitAssetDataList { get; set; }
             public List<UnitBaseStatusData> UnitBaseStatusList { get; set; }
             public List<UnitStageStatusData> UnitStageStatusList { get; set; }
             public Dictionary<int, List<IForeignKey>> UnitItemDataList { get; set; }
             public Dictionary<int, List<IForeignKey>> UnitSkillDataList { get; set; }
-
-            public List<UnitObjectStatus<T>> GetUnitObjectStatusList()
-            {
-                List<UnitObjectStatus<T>> unitObjectStatusList = new List<UnitObjectStatus<T>>();
-                for (int i = 0; i < this.UnitStatusList.Count; i++)
-                {
-                    UnitObjectStatus<T> unitObjectStatus = new UnitObjectStatus<T>();
-                    unitObjectStatus.UnitStatus = this.UnitStatusList[i];
-                    unitObjectStatus.BaseStatus = this.UnitBaseStatusList[i];
-                    unitObjectStatus.StageStatus = this.UnitStageStatusList[i];
-                    unitObjectStatusList.Add(unitObjectStatus);
-                    unitObjectStatus.UnitItemDataList = new ForeignKeyObject<ItemData>(this.UnitItemDataList[i]);
-                    unitObjectStatus.UnitSkillDataList = new ForeignKeyObject<SkillData>(this.UnitSkillDataList[i]);
-                }
-
-                return unitObjectStatusList;
-            }
-        }
-
-        /// <summary>
-        /// メモ：毎度DBにアクセスする必要はあるか？
-        /// メリット：常にDBのデータを最新にするように組む必要が出てくる
-        /// Get Unique Unit Status
-        /// </summary>
-        /// <param name="unitId"></param>
-        /// <param name="stageId"></param>
-        /// <returns></returns>
-        public UnitObjectStatus<T> GetUnitMainObejctStatusOnStage(int unitId, int stageId)
-        {
-            SqliteQueryBuilder builder = this.CreateQueryForUnitOnStage(stageId, false);
-            builder.AddCondition("Id", unitId, typeof(UnitBaseStatusData), true);
-            
-            DataTable dataTable = SqliteHelper.Instance.GetSqliteObjectTable(builder);
-
-            UnitSqliteSummary unitSqliteSummary = this.SetUnitStageSummary<UnitItemData, UnitSkillData>(dataTable, this.GetItemQueryBuider<UnitStageItemData>(), GetSkillQueryBuider<UnitStageSkillData>());
-
-            return unitSqliteSummary.GetUnitObjectStatusList().First();
         }
 
         /// <summary>
@@ -71,14 +34,13 @@ namespace AloneWar.DataObject.Sqlite.Service
         /// </summary>
         /// <param name="stageId"></param>
         /// <returns></returns>
-        public List<UnitObjectStatus<T>> GetUnitSubObejctStatusListOnStage(int stageId, bool isStage)
+        public List<UnitSubStatus> GetUnitSubObejctStatusListOnStage(int stageId, bool isStage)
         {
-            SqliteQueryBuilder builder = this.CreateQueryForUnitOnStage(stageId, isStage);
+            SqliteQueryBuilder builder = this.CreateQueryForUnitOnStage(stageId, isStage, typeof(UnitSubStatus));
+            builder.AddJoinTable(typeof(UnitStageStatusData), typeof(UnitAIStageStatusData), "Id", "UnitStageId");
             DataTable dataTable = SqliteHelper.Instance.GetSqliteObjectTable(builder);
-            
-            UnitSqliteSummary unitSqliteSummary = this.SetUnitStageSummary<UnitStageItemData, UnitStageSkillData>(dataTable, this.GetItemQueryBuider<UnitStageItemData>(), GetSkillQueryBuider<UnitStageSkillData>());
 
-            return unitSqliteSummary.GetUnitObjectStatusList();
+            return this.SummaryUnitSubStatusList(dataTable); ;
         }
 
         /// <summary>
@@ -87,48 +49,81 @@ namespace AloneWar.DataObject.Sqlite.Service
         /// <param name="stageId"></param>
         /// <param name="unitStageIdArray"></param>
         /// <returns></returns>
-        public List<UnitObjectStatus<T>> GetUnitSubEventObjectList(int stageId, params int[] unitStageIdArray)
+        public List<UnitSubStatus> GetUnitSubEventObjectList(int stageId, params int[] unitStageIdArray)
         {
-            SqliteQueryBuilder builder = this.CreateQueryForUnitOnStage(stageId, true);
+            SqliteQueryBuilder builder = this.CreateQueryForUnitOnStage(stageId, true, typeof(UnitSubStatusData));
+            builder.AddJoinTable(typeof(UnitStageStatusData), typeof(UnitAIStageStatusData), "Id", "UnitStageId");
             builder.AddInCondition("Id", unitStageIdArray.Select<int, string>(u => u.ToString()).ToArray(), typeof(UnitStageStatusData), true);
             DataTable dataTable = SqliteHelper.Instance.GetSqliteObjectTable(builder);
 
-            UnitSqliteSummary unitSqliteSummary = this.SetUnitStageSummary<UnitStageItemData, UnitStageSkillData>(dataTable, this.GetItemQueryBuider<UnitStageItemData>(), GetSkillQueryBuider<UnitStageSkillData>());
-
-            return unitSqliteSummary.GetUnitObjectStatusList();
+            return this.SummaryUnitSubStatusList(dataTable);
         }
 
         /// <summary>
-        /// 
+        /// サブをまとめる
+        /// </summary>
+        /// <param name="dataTable"></param>
+        /// <returns></returns>
+        private List<UnitSubStatus> SummaryUnitSubStatusList(DataTable dataTable)
+        {
+            UnitMaterialSummary unitSqliteSummary = this.SetUnitSummary<UnitStageItemData, UnitStageSkillData>(dataTable, this.GetItemQueryBuider<UnitStageItemData>(), GetSkillQueryBuider<UnitStageSkillData>());
+            List<UnitSubStatusData> unitSubStatusDataList = DataBinding<UnitSubStatusData>.DataTableToObjectList(dataTable);
+            List<UnitAIStageStatusData> unitAIStageStatusDataList = DataBinding<UnitAIStageStatusData>.DataTableToObjectList(dataTable);
+            List<UnitSubStatus> unitSubStatusList = new List<UnitSubStatus>();
+            for (int i = 0; i < unitSubStatusDataList.Count; i++)
+            {
+                UnitSubStatus unitSubStatus = new UnitSubStatus();
+                unitSubStatus.StageStatus = unitSqliteSummary.UnitStageStatusList[i];
+                unitSubStatus.BaseStatus = unitSqliteSummary.UnitBaseStatusList[i];
+                unitSubStatus.UnitAssetData = unitSqliteSummary.UnitAssetDataList[i];
+                unitSubStatus.UnitItemDataList = new ForeignKeyObject<ItemData>(unitSqliteSummary.UnitItemDataList[i]);
+                unitSubStatus.UnitSkillDataList = new ForeignKeyObject<SkillData>(unitSqliteSummary.UnitSkillDataList[i]);
+
+                unitSubStatus.UnitSubStatusData = unitSubStatusDataList[i];
+                unitSubStatus.UnitAIStageStatusData = unitAIStageStatusDataList[i];
+                unitSubStatusList.Add(unitSubStatus);
+            }
+
+            return unitSubStatusList;
+        }
+
+        /// <summary>
+        /// 共通部分のクエリを作成
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="stageId"></param>
         /// <returns></returns>
-        private SqliteQueryBuilder CreateQueryForUnitOnStage(int stageId,bool isStage)
+        private SqliteQueryBuilder CreateQueryForUnitOnStage(int stageId,bool isStage,Type type)
         {
             SqliteQueryBuilder builder = new SqliteQueryBuilder(typeof(UnitBaseStatusData));
-            builder.AddJoinTable(typeof(UnitBaseStatusData), typeof(T), "Id", "UnitId");
+            builder.AddJoinTable(typeof(UnitBaseStatusData), type, "Id", "UnitId");
             builder.AddJoinTable(typeof(UnitBaseStatusData), typeof(UnitStageStatusData), "Id", "UnitId");
+            builder.AddJoinTable(typeof(UnitBaseStatusData), typeof(UnitAssetData), "Id", "UnitId");
             builder.AddCondition("StageId", stageId, typeof(UnitStageStatusData), true);
-            if (isStage)
+            if (!isStage)
                 builder.AddCondition("IsEvent", "1", typeof(UnitStageStatusData), true);
             builder.AddOrderByColumns("SortNo", typeof(UnitStageStatusData), true);
             return builder;
         }
 
         /// <summary>
-        /// UnitBaseStatusに値を設定する
+        /// まとめる
         /// </summary>
+        /// <typeparam name="ItemT"></typeparam>
+        /// <typeparam name="SkillT"></typeparam>
         /// <param name="dataTable"></param>
+        /// <param name="getItemQueryCallback"></param>
+        /// <param name="getSkillQueryCallback"></param>
         /// <returns></returns>
-        private UnitSqliteSummary SetUnitStageSummary<ItemT, SkillT>(DataTable dataTable, Func<UnitStageStatusData, SqliteQueryBuilder> getItemQueryCallback, Func<UnitStageStatusData, SqliteQueryBuilder> getSkillQueryCallback)
+        private UnitMaterialSummary SetUnitSummary<ItemT, SkillT>(DataTable dataTable, Func<UnitStageStatusData, SqliteQueryBuilder> getItemQueryCallback, Func<UnitStageStatusData, SqliteQueryBuilder> getSkillQueryCallback)
             where ItemT : SqliteBaseData, IForeignKey
             where SkillT : SqliteBaseData, IForeignKey
         {
-            UnitSqliteSummary unitSummary = new UnitSqliteSummary();
-            unitSummary.UnitStatusList = DataBinding<T>.DataTableToObjectList(dataTable);
+            UnitMaterialSummary unitSummary = new UnitMaterialSummary();
+            
             unitSummary.UnitBaseStatusList = DataBinding<UnitBaseStatusData>.DataTableToObjectList(dataTable);
             unitSummary.UnitStageStatusList = DataBinding<UnitStageStatusData>.DataTableToObjectList(dataTable);
+            unitSummary.UnitAssetDataList = DataBinding<UnitAssetData>.DataTableToObjectList(dataTable);
             // Item,Skill Select
             for (int i = 0; i < unitSummary.UnitStageStatusList.Count; i++)
             {

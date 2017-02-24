@@ -22,6 +22,9 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
         public int Mp { get; set; }
 
         [SqliteProperty]
+        public int SummonRange { get; set; }
+
+        [SqliteProperty]
         public string Rank { get; set; }
 
         [SqliteProperty]

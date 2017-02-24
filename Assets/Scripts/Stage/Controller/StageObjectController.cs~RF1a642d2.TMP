@@ -1,0 +1,102 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using AloneWar.Common.TaskHelper;
+using UnityEngine;
+using AloneWar.Unit.Component;
+using AloneWar.DataObject.Sqlite.SqliteObject;
+using AloneWar.Stage.FieldObject;
+using AloneWar.Stage.Component;
+using AloneWar.Stage.Event.EventObject;
+using AloneWar.Unit.Status;
+using AloneWar.DataObject.Sqlite.SqliteObject.Base;
+using AloneWar.Common;
+
+namespace AloneWar.Stage.Controller
+{
+    public class StageObjectController : TaskCoroutineBeahavior
+    {
+        /// <summary>
+        /// 汎用移動イベント
+        /// </summary>
+        public List<PositionEvent> MoveEvent { get { return this.moveEvent; } set { this.moveEvent = value; } }
+        private List<PositionEvent> moveEvent = new List<PositionEvent>();
+
+        public IEnumerator Move()
+        {
+            Coroutine coroutine = StartCoroutine("");
+            
+            yield return null;
+        }
+
+        public void UpdateObjectPosition(BaseStageObject baseStageObject, int positionId)
+        {
+            baseStageObject.BeforePositionId = baseStageObject.PositionId;
+            baseStageObject.PositionId = positionId;
+            this.MoveEvent.ForEach(m => {
+                m.SetVaildEvent(positionId);
+            });
+        }
+    }
+
+    /// <summary>
+    /// ユニット単位のコントローラ
+    /// </summary>
+    public class UnitObjectController<T> where T : SqliteBaseData
+    {
+        private UnitObjectStatus<T> UnitObjectStatus { get; set; }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="unitObjectStatus"></param>
+        public UnitObjectController(UnitObjectStatus<T> unitObjectStatus)
+        {
+            this.UnitObjectStatus = unitObjectStatus;
+        }
+
+        /// <summary>
+        /// key is positionId
+        /// </summary>
+        public Dictionary<int,RangeCommand> MassRangeList { get; set; }
+        private Dictionary<int, RangeCommand> massRangeList = new Dictionary<int, RangeCommand>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void SetRange()
+        {
+            int positionId = this.UnitObjectStatus.StageStatus.PositionId;
+            int move = this.UnitObjectStatus.BaseStatus.Move;
+            int range = this.UnitObjectStatus.BaseStatus.Range;
+
+            RangeCommand massRange = new RangeCommand(positionId, move);
+            this.MassRangeList.Add(positionId, massRange);
+            this.SetRangeLoop(new List<RangeCommand>(new RangeCommand[] { massRange }), CommandCategory.Move, CommandCategory.Attack);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="massRangeList"></param>
+        public void SetRangeLoop(List<RangeCommand> massRangeList, CommandCategory command0, CommandCategory command1)
+        {
+            List<RangeCommand> rangeCommandNext = new List<RangeCommand>();
+            int w = StageManager.Instance.StageInformation.StageTableData.Width;
+            massRangeList.ForEach(m => { 
+                MassStatus  massStatus = m.MassComponent.MassStatus;
+                // top
+                RangeCommand upRange = new RangeCommand(m, massStatus.PositionId - w, RangeDirection.Top);
+                
+                // bottom
+                RangeCommand bottomRange = new RangeCommand(m, massStatus.PositionId + w, RangeDirection.Bottom);
+                // right
+                RangeCommand rightRange = new RangeCommand(m, massStatus.PositionId + 1, RangeDirection.Right);
+                // left
+                RangeCommand leftRange = new RangeCommand(m, massStatus.PositionId - 1, RangeDirection.Left);
+            });
+        }
+    }
+}

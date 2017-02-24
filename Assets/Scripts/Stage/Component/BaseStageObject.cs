@@ -11,21 +11,12 @@ namespace AloneWar.Stage.Component
     public abstract class BaseStageObject : MonoBehaviour
     {
 
-
-
         #region 座標
 
         /// <summary>
         /// 
         /// </summary>
         public abstract int PositionId { get; set; }
-
-        private int _PositionId { get; set; }
-
-        /// <summary>
-        /// 直前の座標
-        /// </summary>
-        public int BeforePositionId { get; set; }
 
         /// <summary>
         /// 

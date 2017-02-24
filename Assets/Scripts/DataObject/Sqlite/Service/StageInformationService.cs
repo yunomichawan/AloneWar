@@ -35,7 +35,7 @@ namespace AloneWar.DataObject.Sqlite.Service
             sqliteQueryBuilder.AddJoinTable(typeof(StageData), typeof(StageClearTriggerData), "Id", "StageId");
             sqliteQueryBuilder.AddCondition("Id", stageId, typeof(StageData), true);
             DataTable dataTable = SqliteHelper.Instance.GetSqliteObjectTable(sqliteQueryBuilder);
-            stageInformation.StageTableData = DataBinding<StageData>.DataTableToObjectList(dataTable).First();
+            stageInformation.StageData = DataBinding<StageData>.DataTableToObjectList(dataTable).First();
             stageInformation.StageClearTriggerData = DataBinding<StageClearTriggerData>.DataTableToObjectList(dataTable).First();
             
             // Placement
@@ -61,10 +61,11 @@ namespace AloneWar.DataObject.Sqlite.Service
             stageInformation.SetStageEventTableDataList(stageEventTriggerDataList, eventTriggerDataList, eventDataList, eventStatusDataList);
             
             // Unit
-            UnitStatusService<UnitMainStatusData> unitMainStatusService = new UnitStatusService<UnitMainStatusData>();
-            UnitStatusService<UnitSubStatusData> unitSubStatusService = new UnitStatusService<UnitSubStatusData>();
-            stageInformation.UnitMainStatus = unitMainStatusService.GetUnitMainObejctStatusOnStage(mainUnitId, stageId);
-            stageInformation.UnitSubStatusList = unitSubStatusService.GetUnitSubObejctStatusListOnStage(stageId, false);
+            UnitStatusService unitStatusService = new UnitStatusService();
+            // メインについてはデータの持ち方を確立してから
+            //stageInformation.UnitMainStatus = unitStatusService.GetUnitMainObejctStatusOnStage(mainUnitId, stageId);
+            // Sub
+            stageInformation.UnitSubStatusList = unitStatusService.GetUnitSubObejctStatusListOnStage(stageId, true);
 
             return stageInformation;
         }

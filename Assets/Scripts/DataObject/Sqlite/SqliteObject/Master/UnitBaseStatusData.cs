@@ -11,6 +11,8 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
     [DataAccess("UnitBaseStatusData", AloneWarConst.SqliteDataBaseName.Master)]
     public class UnitBaseStatusData : SqliteBaseData
     {
+        #region
+
         [SqliteProperty]
         public string Name { get; set; }
 
@@ -27,6 +29,9 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
         public int Range { get; set; }
 
         [SqliteProperty]
+        public int InvalidRange { get; set; }
+
+        [SqliteProperty]
         public int Move { get; set; }
 
         [SqliteProperty]
@@ -39,10 +44,38 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
         public int Avoid { get; set; }
 
         [SqliteProperty]
+        public int MainCommandCategory { get; set; }
+
+        [SqliteProperty]
+        public int SubCommandCategory { get; set; }
+
+        [SqliteProperty]
         public int Experience { get; set; }
 
         [SqliteProperty]
         public int AssetId { get; set; }
+
+        #endregion
+
+        #region property
+
+        public CommandCategory MainCommand
+        {
+            get
+            {
+                return (CommandCategory)this.MainCommandCategory;
+            }
+        }
+
+        public CommandCategory SubCommand
+        {
+            get
+            {
+                return (CommandCategory)this.SubCommandCategory;
+            }
+        }
+
+        #endregion
 
     }
 }

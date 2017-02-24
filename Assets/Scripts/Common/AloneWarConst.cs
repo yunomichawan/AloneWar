@@ -7,6 +7,10 @@ namespace AloneWar.Common
 {
     public class AloneWarConst
     {
+        public const int ErrorPositionId = -1;
+
+        public const float MaxPercent = 100;
+
         public struct SceneName
         {
             public const string Title = "Title";

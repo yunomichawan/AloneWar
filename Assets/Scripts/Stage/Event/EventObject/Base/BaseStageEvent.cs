@@ -30,18 +30,18 @@ namespace AloneWar.Stage.Event.EventObject.Base
         /// <summary>
         /// 有効フラグ
         /// </summary>
-        public bool VaildFlg
+        public bool ValidFlg
         {
             get
             {
-                return this.StageEventInformation.EventStatusData.Count < this.StageEventInformation.StageEventTriggerData.VaildCount;
+                return this.StageEventInformation.EventStatusData.Count < this.StageEventInformation.StageEventTriggerData.ValidCount;
             }
         }
 
         /// <summary>
         /// 有効トリガー
         /// </summary>
-        public abstract EventTriggerCategory[] VaildEventTrigger { get; }
+        public abstract EventTriggerCategory[] ValidEventTrigger { get; }
 
         /// <summary>
         /// 
@@ -60,7 +60,7 @@ namespace AloneWar.Stage.Event.EventObject.Base
         {
             get
             {
-                return StageManager.Instance.stageEventBuilder;
+                return StageEventBuilder.Instance;
             }
         }
 
@@ -71,6 +71,24 @@ namespace AloneWar.Stage.Event.EventObject.Base
         {
             this.StageEventInformation.EventStatusData.Count++;
             yield break;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Action EventAfterCallback { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Action EventBeforeCallback { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void EnqueueEventTask()
+        {
+            StageEventBuilder.Instance.TaskQueue.Enqueue(this.EventTask);
         }
     }
 }

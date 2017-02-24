@@ -1,0 +1,150 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using AloneWar.DataObject.Sqlite.SqliteObject;
+using AloneWar.DataObject.Sqlite.SqliteObject.Base;
+using AloneWar.Unit.Status;
+using AloneWar.Common;
+using AloneWar.Stage.FieldObject;
+
+namespace AloneWar.Stage.Controller
+{
+    /// <summary>
+    /// ユニット単位のコントローラ
+    /// </summary>
+    public class UnitController<T> where T : SqliteBaseData
+    {
+        #region property
+
+        private int MainRange { get; set; }
+
+        private int SubRange { get; set; }
+
+        private UnitObjectStatus<T> UnitObjectStatus { get; set; }
+
+        private CommandCategory MainCommandCategory { get; set; }
+
+        private CommandCategory SubCommandCategory { get; set; }
+
+        /// <summary>
+        /// key is positionId
+        /// </summary>
+        public Dictionary<int, RangeCommand> MainRangeCommandList { get { return this.mainCommandList; } set { this.mainCommandList = value; } }
+        private Dictionary<int, RangeCommand> mainCommandList = new Dictionary<int, RangeCommand>();
+
+        /// <summary>
+        /// key is positionId
+        /// </summary>
+        public Dictionary<int, RangeCommand> SubRangeCommandList { get { return this.subCommandList; } set { this.subCommandList = value; } }
+        private Dictionary<int, RangeCommand> subCommandList = new Dictionary<int, RangeCommand>();
+
+        #endregion
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="unitObjectStatus"></param>
+        public UnitController(UnitObjectStatus<T> unitObjectStatus, int mainRange, int subRange, CommandCategory mainCommand, CommandCategory subCommand)
+        {
+            this.UnitObjectStatus = unitObjectStatus;
+            this.MainRange = mainRange;
+            this.SubRange = subRange;
+            this.MainCommandCategory = mainCommand;
+            this.SubCommandCategory = subCommand;
+        }
+
+        /// <summary>
+        /// 初期化
+        /// </summary>
+        public void InitRange()
+        {
+            this.MainRange = 0;
+            this.SubRange = 0;
+            this.MainCommandCategory = CommandCategory.None;
+            this.SubCommandCategory = CommandCategory.None;
+            this.MainRangeCommandList.Clear();
+            this.SubRangeCommandList.Clear();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void SetRange(int mainRange,int subRange)
+        {
+            this.InitRange();
+            int positionId = this.UnitObjectStatus.StageStatus.PositionId;
+            int move = mainRange;//this.UnitObjectStatus.BaseStatus.Move;
+            int range = subRange;//this.UnitObjectStatus.BaseStatus.Range;
+
+            RangeCommand massRange = new RangeCommand(positionId, move, this.UnitObjectStatus.StageStatus.UnitSide);
+            List<RangeCommand> subRangeCommandList = new List<RangeCommand>();
+            this.MainRangeCommandList.Add(positionId, massRange);
+            this.SetRangeLoop(new List<RangeCommand>(new RangeCommand[] { massRange }), subRangeCommandList);
+            this.SetRangeLoop(subRangeCommandList, new List<RangeCommand>());
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mainRangeCommandList"></param>
+        private void SetRangeLoop(List<RangeCommand> mainRangeCommandList, List<RangeCommand> subRangeCommandList)
+        {
+            List<RangeCommand> rangeCommandNext = new List<RangeCommand>();
+            int w = StageManager.Instance.StageInformation.StageTableData.Width;
+            mainRangeCommandList.ForEach(m =>
+            {
+                MassStatus massStatus = m.MassComponent.MassStatus;
+                // top
+                RangeCommand upRange = new RangeCommand(m, massStatus.PositionId - w, RangeDirection.Top);
+                this.AddRangeIfVaild(upRange, mainRangeCommandList, subRangeCommandList);
+                // bottom
+                RangeCommand bottomRange = new RangeCommand(m, massStatus.PositionId + w, RangeDirection.Bottom);
+                this.AddRangeIfVaild(bottomRange, mainRangeCommandList, subRangeCommandList);
+                // right
+                RangeCommand rightRange = new RangeCommand(m, massStatus.PositionId + 1, RangeDirection.Right);
+                this.AddRangeIfVaild(rightRange, mainRangeCommandList, subRangeCommandList);
+                // left
+                RangeCommand leftRange = new RangeCommand(m, massStatus.PositionId - 1, RangeDirection.Left);
+                this.AddRangeIfVaild(rightRange, mainRangeCommandList, subRangeCommandList);
+            });
+            // 再帰処理
+            this.SetRangeLoop(rangeCommandNext, subRangeCommandList);
+        }
+
+        /// <summary>
+        /// 対象マスが有効な場合、範囲に追加
+        /// </summary>
+        /// <param name="rangeCommand"></param>
+        private void AddRangeIfVaild(RangeCommand rangeCommand, List<RangeCommand> mainRangeCommandList, List<RangeCommand> subRangeCommandList)
+        {
+            if (!this.MainRangeCommandList.ContainsKey(rangeCommand.MassComponent.PositionId) && !this.SubRangeCommandList.ContainsKey(rangeCommand.MassComponent.PositionId))
+            {
+                if (rangeCommand.IsVaildRange && rangeCommand.IsVaildRangeUnit)
+                {
+                    RangeCommand subRange = new RangeCommand(rangeCommand, rangeCommand.MassComponent.PositionId, rangeCommand.DirectionArray[rangeCommand.DirectionArray.Length - 1], this.SubCommandCategory);
+                    subRange.Range = this.SubRange;
+                    this.SubRangeCommandList.Add(subRange.MassComponent.PositionId, subRange);
+                    subRangeCommandList.Add(subRange);
+                }
+                else
+                {
+                    this.MainRangeCommandList.Add(rangeCommand.MassComponent.PositionId, rangeCommand);
+                    mainRangeCommandList.Add(rangeCommand);
+                }
+
+            }
+            else
+            {
+                this.MainRangeCommandList.Add(rangeCommand.MassComponent.PositionId, rangeCommand);
+                mainRangeCommandList.Add(rangeCommand);
+            }
+        }
+
+        public void SetRangeColor()
+        {
+
+        }
+    }
+}

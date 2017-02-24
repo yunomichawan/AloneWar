@@ -19,9 +19,9 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
         public int UnitId { get; set; }
 
         [SqliteProperty]
-        public int Cost { get; set; }
+        public int CostHp { get; set; }
 
         [SqliteProperty]
-        public int AiCategory { get; set; }
+        public int CostMp { get; set; }
     }
 }

@@ -8,6 +8,17 @@ namespace AloneWar.Common
     /// <summary>
     /// 
     /// </summary>
+    public enum RangeDirection
+    {
+        Top,
+        Bottom,
+        Right,
+        Left,
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
     public enum BindCategory
     {
         Sqlite,
@@ -17,22 +28,17 @@ namespace AloneWar.Common
     /// <summary>
     /// 
     /// </summary>
-    public enum AiCategory
-    {
-        Wait,
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
     public enum CommandCategory
     {
+        Attack,
         Move,
         Battle,
+        Summon,
         MpSummon,
         HpSummon,
         HalfSummon,
         Trash,
+        None,
     }
 
     /// <summary>
@@ -50,9 +56,38 @@ namespace AloneWar.Common
     /// <summary>
     /// 
     /// </summary>
+    public enum UnitSubSummonCategory
+    {
+        SummonHp,
+        SummonMp,
+        SummonHalf,
+    }
+
+    #region Sqlite Master Code
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public enum ResourceCategory
+    {
+        UnitPrefab,
+        Label,
+        None,
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
     public enum UnitMainCategory
     {
-
+        /// <summary>
+        /// 少数精鋭
+        /// </summary>
+        SelectFew,
+        /// <summary>
+        /// 大群
+        /// </summary>
+        Horge,
     }
 
     /// <summary>
@@ -69,21 +104,19 @@ namespace AloneWar.Common
     /// <summary>
     /// 
     /// </summary>
-    public enum UnitSubSummonCategory
+    public enum AiCategory
     {
-        SummonHp,
-        SummonMp,
-        SummonHalf,
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public enum ResourceCategory
-    {
-        UnitPrefab,
-        Label,
-        None,
+        Wait,
+        InRange,
+        LowHp,
+        TargetMain,
+        Simple,
+        Fool,
+        /// <summary>
+        /// 以下、初期開発では実装しない
+        /// </summary>
+        Cooperation,
+        SacrificedPiece,
     }
 
     /// <summary>
@@ -108,7 +141,7 @@ namespace AloneWar.Common
     {
         TurnOver, // trigger set 
         PositionStop, // trigger set 
-        PositionStopSpecificUnit, // trigger set 
+        PositionStopUniqueUnit, // trigger set 
         PositionClose, // trigger set 
         AreaStop, // trigger set 
         UnitKill, // trigger set 
@@ -143,5 +176,7 @@ namespace AloneWar.Common
     {
         TargetUnitKill,
     }
+
+    #endregion
 
 }

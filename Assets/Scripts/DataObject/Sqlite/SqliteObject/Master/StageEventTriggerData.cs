@@ -36,7 +36,7 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
         /// 
         /// </summary>
         [SqliteProperty]
-        public int VaildCount { get; set; }
+        public int ValidCount { get; set; }
 
         #endregion
 
