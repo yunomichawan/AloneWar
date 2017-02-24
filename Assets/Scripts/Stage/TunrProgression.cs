@@ -23,12 +23,12 @@ namespace AloneWar.Stage
             switch (turnCategory)
             {
                 case TurnCategory.Player:
-                    unitSubComponentList = StageManager.Instance.StageInformation.UnitSubComponentList.Values.Where(u => u.UnitObjectStatus.StageStatus.UnitSide.Equals(UnitSideCategory.Player)).ToList();
+                    unitSubComponentList = StageManager.Instance.StageInformation.UnitSubComponentList.Values.Where(u => u.UnitBaseStatus.StageStatus.UnitSide.Equals(UnitSideCategory.Player)).ToList();
                     break;
                 case TurnCategory.PlayerUnit: //
                     break;
                 case TurnCategory.Enemy:
-                    unitSubComponentList = StageManager.Instance.StageInformation.UnitSubComponentList.Values.Where(u => u.UnitObjectStatus.StageStatus.UnitSide.Equals(UnitSideCategory.Enemy)).ToList();
+                    unitSubComponentList = StageManager.Instance.StageInformation.UnitSubComponentList.Values.Where(u => u.UnitBaseStatus.StageStatus.UnitSide.Equals(UnitSideCategory.Enemy)).ToList();
                     break;
                 case TurnCategory.EnemyUnit: //
                     break;

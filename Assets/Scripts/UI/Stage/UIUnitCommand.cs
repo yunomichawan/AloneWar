@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using AloneWar.Common.Component;
-using AloneWar.Stage.Controller;
+﻿using AloneWar.Common.Component;
+using AloneWar.Stage.Controller.Unit;
 
 namespace AloneWar.UI.Stage
 {

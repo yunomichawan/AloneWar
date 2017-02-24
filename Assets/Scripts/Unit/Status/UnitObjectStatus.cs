@@ -17,35 +17,5 @@ namespace AloneWar.Unit.Status
     public class UnitObjectStatus<T> : UnitBaseStatus where T : SqliteBaseData
     {
         public T UnitStatus { get; set; }
-
-        public int DamageHp
-        {
-            get
-            {
-                return this.BaseStatus.Hit - this.StageStatus.Damage;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public CommandCategory MainCommand
-        {
-            get
-            {
-                return this.BaseStatus.MainCommand;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public CommandCategory SubCommand
-        {
-            get
-            {
-                return this.BaseStatus.SubCommand;
-            }
-        }
     }
 }

@@ -14,6 +14,17 @@ namespace AloneWar.Stage
 {
     public class StageEventBuilder : TaskCoroutineBeahavior
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        public static StageEventBuilder Instance
+        {
+            get
+            {
+                return StageManager.Instance.stageEventBuilder;
+            }
+        }
+
         public IEnumerator EventDataTaskRun(EventData eventTableData)
         {
             EventCategory eventCategory = (EventCategory)eventTableData.EventCategory;

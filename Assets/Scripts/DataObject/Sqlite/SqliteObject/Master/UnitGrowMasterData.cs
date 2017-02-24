@@ -33,6 +33,9 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
         public int Range { get; set; }
 
         [SqliteProperty]
+        public int InvalidRange { get; set; }
+
+        [SqliteProperty]
         public int Move { get; set; }
 
         [SqliteProperty]

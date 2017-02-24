@@ -10,6 +10,40 @@ namespace AloneWar.Unit.Status
 {
     public abstract class UnitBaseStatus
     {
+        #region get only
+
+        public int DamageHp
+        {
+            get
+            {
+                return this.BaseStatus.Hp - this.StageStatus.Damage;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public CommandCategory MainCommand
+        {
+            get
+            {
+                return this.BaseStatus.MainCommand;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public CommandCategory SubCommand
+        {
+            get
+            {
+                return this.BaseStatus.SubCommand;
+            }
+        }
+
+        #endregion
+
         public UnitBaseStatusData BaseStatus { get; set; }
 
         public UnitStageStatusData StageStatus { get; set; }

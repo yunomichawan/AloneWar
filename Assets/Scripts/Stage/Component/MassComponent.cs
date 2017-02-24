@@ -40,7 +40,7 @@ namespace AloneWar.Stage.Component
                 {
                     this.CloseEventList.ForEach(m =>
                     {
-                        if (m.VaildFlg)
+                        if (m.ValidFlg)
                         {
                             m.EnqueueEventTask();
                         }

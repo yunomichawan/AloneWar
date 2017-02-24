@@ -8,7 +8,7 @@ using AloneWar.Common.Bind;
 using AloneWar.Common.TaskHelper;
 
 namespace AloneWar.Common.Bind
-{
+{                                                                                                                                                   
     /// <summary>
     /// UIに対して値を設定、取得するクラス
     /// </summary>
@@ -49,18 +49,19 @@ namespace AloneWar.Common.Bind
         public static void SetPropertyValue(Transform childTransform, object value)
         {
             if (value == null) return;
-            if (value.GetType().Equals(typeof(Sprite)))
+            Type valueType = value.GetType();
+            if (valueType.Equals(typeof(Sprite)))
             {
                 if (childTransform.GetComponent<Image>() != null)
                 {
-                    if (value.GetType().Equals(typeof(Sprite)))
+                    if (valueType.Equals(typeof(Sprite)))
                     {
                         childTransform.GetComponent<Image>().sprite = (Sprite)value;
                     }
                 }
-                else if (value.GetType().Equals(typeof(SpriteRenderer)))
+                else if (valueType.Equals(typeof(SpriteRenderer)))
                 {
-                    if (value.GetType().Equals(typeof(Sprite)))
+                    if (valueType.Equals(typeof(Sprite)))
                     {
                         childTransform.GetComponent<SpriteRenderer>().sprite = (Sprite)value;
                     }
@@ -70,7 +71,7 @@ namespace AloneWar.Common.Bind
             {
                 if (childTransform.GetComponent<InputField>() != null)
                 {
-                    if (value.GetType().Equals(typeof(List<string>)))
+                    if (valueType.Equals(typeof(List<string>)))
                     {
                         childTransform.GetComponent<InputField>().text = string.Join(",", ((List<string>)value).ToArray());
                     }
@@ -81,7 +82,7 @@ namespace AloneWar.Common.Bind
                 }
                 else if (childTransform.GetComponent<Toggle>() != null)
                 {
-                    if (value.GetType().Equals(typeof(bool)))
+                    if (valueType.Equals(typeof(bool)))
                     {
                         childTransform.GetComponent<Toggle>().isOn = (bool)value;
                     }
@@ -89,7 +90,6 @@ namespace AloneWar.Common.Bind
                 else if (childTransform.GetComponent<Text>() != null)
                 {
                     Text dispText = childTransform.GetComponent<Text>();
-
 
                     if (dispText != null)
                     {

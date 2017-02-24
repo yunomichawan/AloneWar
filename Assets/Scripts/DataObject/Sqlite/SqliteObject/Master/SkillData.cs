@@ -15,7 +15,7 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
         public int SkillCategory { get; set; }
 
         [SqliteProperty]
-        public int VaildTurnCount { get; set; }
+        public int ValidTurnCount { get; set; }
 
         [SqliteProperty]
         public int SortNo { get; set; }

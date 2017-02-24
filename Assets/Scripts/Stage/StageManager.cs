@@ -1,15 +1,13 @@
 ﻿using AloneWar.Common;
-using AloneWar.Common.Extensions;
 using AloneWar.Common.Component;
-using AloneWar.Common.TaskHelper;
+using AloneWar.Common.Extensions;
 using AloneWar.DataObject.Json.Helper;
 using AloneWar.DataObject.Sqlite.SqliteObject.Base;
 using AloneWar.DataObject.Sqlite.SqliteObject.Master;
-using AloneWar.DataObject.Sqlite.SqliteObject.Transaction;
 using AloneWar.Stage.Component;
-using AloneWar.Stage.Event;
+using AloneWar.Stage.Controller;
+using AloneWar.Stage.Controller.Unit;
 using AloneWar.Stage.Event.EventObject;
-using AloneWar.Stage.Event.EventObject.Base;
 using AloneWar.Stage.FieldObject;
 using AloneWar.Unit.Component;
 using AloneWar.Unit.Status;
@@ -17,9 +15,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using UnityEngine;
-using AloneWar.Stage.Controller;
 
 namespace AloneWar.Stage
 {
@@ -71,12 +67,12 @@ namespace AloneWar.Stage
                 // イベントタスクを優先
                 if (this.stageEventBuilder.TaskQueue.Count > 0)
                 {
-                    yield return StartCoroutine(this.TaskRun());
+                    yield return StartCoroutine(this.TaskNext());
                 }
                 // 通常タスク
                 else if (this.TaskQueue.Count > 0)
                 {
-                    yield return StartCoroutine(this.TaskRun());
+                    yield return StartCoroutine(this.TaskNext());
                 }
                 yield return null;
             }
@@ -137,7 +133,7 @@ namespace AloneWar.Stage
             /// </summary>
             public void CreateStage()
             {
-                this.CreateField(this.StageInformation.StageTableData.ConstitutionJson);
+                this.CreateField(this.StageInformation.StageData.ConstitutionJson);
                 this.SetUnitPosition();
                 this.SetStageEvent();
             }
@@ -172,7 +168,7 @@ namespace AloneWar.Stage
                     this.CreateStageObject<UnitSubComponent>(prefab, c =>
                     {
                         this.StageInformation.UnitSubComponentList.Add(c.PositionId, c);
-                        this.SetUnitPropety<UnitSubStatusData>(c, u);
+                        this.SetUnitPropety(c, u);
                     });
                 });
 
@@ -181,7 +177,8 @@ namespace AloneWar.Stage
                 this.CreateStageObject<UnitMainComponent>(mainUnit, c =>
                 {
                     this.StageInformation.UnitMainComponent = c;
-                    this.SetUnitPropety<UnitMainStatusData>(c, this.StageInformation.UnitMainStatus);
+                    this.SetUnitPropety(c, this.StageInformation.UnitMainStatus);
+                    c.UnitMainStatus = this.StageInformation.UnitMainStatus;
                 });
             }
 
@@ -191,13 +188,10 @@ namespace AloneWar.Stage
             /// <typeparam name="T"></typeparam>
             /// <param name="unit"></param>
             /// <param name="status"></param>
-            private void SetUnitPropety<T>(UnitBaseComponent<T> unit, UnitObjectStatus<T> status) where T : SqliteBaseData
+            private void SetUnitPropety(UnitBaseComponent unit, UnitBaseStatus status)
             {
                 unit.transform.parent = this.UnitParent;
-                unit.UnitObjectStatus = status;
-                unit.UnitCommandController = new UnitCommandController<T>(unit);
-                unit.UnitRange = new UnitRange<T>(unit);
-                unit.UnitRange.SetRange(unit.MainRange, unit.SubRange, unit.UnitObjectStatus.MainCommand, unit.UnitObjectStatus.SubCommand);
+                unit.InitController();
             }
 
             /// <summary>
@@ -284,6 +278,5 @@ namespace AloneWar.Stage
                 
             }
         }
-
     }
 }

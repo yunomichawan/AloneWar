@@ -21,9 +21,9 @@ namespace AloneWar.Stage.Event.EventObject
 
         }
 
-        public override EventTriggerCategory[] VaildEventTrigger { get { return this.vaildEventTrigger; } }
+        public override EventTriggerCategory[] ValidEventTrigger { get { return this.validEventTrigger; } }
 
-        public EventTriggerCategory[] vaildEventTrigger;
+        public EventTriggerCategory[] validEventTrigger;
 
         public override IEnumerator EventTask()
         {

@@ -1,23 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
-using AloneWar.DataObject.Sqlite.SqliteObject;
-using AloneWar.Unit.Status;
+﻿using AloneWar.DataObject.Sqlite.SqliteObject.Base;
 using AloneWar.Stage;
-using AloneWar.DataObject.Sqlite.SqliteObject.Base;
 using AloneWar.Stage.Component;
+using AloneWar.Stage.Controller.Unit;
 using AloneWar.Stage.Event.EventObject;
-using AloneWar.Stage.Event.EventObject.Base;
-using AloneWar.Stage.Controller;
-using AloneWar.Common;
+using AloneWar.Unit.Status;
+using System;
+using System.Collections.Generic;
 
 namespace AloneWar.Unit.Component
 {
     [Serializable]
-    public abstract class UnitBaseComponent<T> : BaseStageObject
-        where T : SqliteBaseData
+    public abstract class UnitBaseComponent : BaseStageObject
     {
         /// <summary>
         /// ユニークユニット移動イベント
@@ -27,20 +20,20 @@ namespace AloneWar.Unit.Component
 
         public override int StageObjectId
         {
-            get { return this.UnitObjectStatus.StageStatus.Id; }
+            get { return this.UnitBaseStatus.StageStatus.Id; }
         }
 
         public override int PositionId
         {
             get
             {
-                return this.UnitObjectStatus.StageStatus.PositionId;
+                return this.UnitBaseStatus.StageStatus.PositionId;
             }
             set
             {
-                this.UnitObjectStatus.StageStatus.PositionId = value;
+                this.UnitBaseStatus.StageStatus.PositionId = value;
                 this.UniqueMoveEvent.ForEach(u => {
-                    u.SetVaildEvent(this.PositionId);
+                    u.SetValidEvent(this.PositionId);
                 });
             }
         }
@@ -50,21 +43,26 @@ namespace AloneWar.Unit.Component
             get { return StageManager.Instance.StageInformation.GetPositionArea(this.PositionId); }
         }
 
-        public UnitObjectStatus<T> UnitObjectStatus { get; set; }
-
         #region controller
 
         /// <summary>
         /// 破棄された場合、Sqliteクラスのインスタンスが破棄されるのでは？
         /// </summary>
-        public UnitCommandController<T> UnitCommandController { get; set; }
+        public UnitCommandController UnitCommandController { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public UnitRange<T> UnitRange { get; set; }
+        public UnitRange UnitRange { get; set; }
 
         #endregion
+
+        #region 抽象
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public abstract UnitBaseStatus UnitBaseStatus { get; }
 
         #region default range & command
 
@@ -75,7 +73,7 @@ namespace AloneWar.Unit.Component
         {
             get
             {
-                return this.UnitObjectStatus.BaseStatus.Move;
+                return this.UnitBaseStatus.BaseStatus.Move;
             }
         }
 
@@ -86,11 +84,34 @@ namespace AloneWar.Unit.Component
         {
             get
             {
-                return this.UnitObjectStatus.BaseStatus.Range;
+                return this.UnitBaseStatus.BaseStatus.Range;
+            }
+        }
+
+        /// <summary>
+        /// default is InvalidRange
+        /// </summary>
+        public virtual int InvalidRange
+        {
+            get
+            {
+                return this.UnitBaseStatus.BaseStatus.InvalidRange;
             }
         }
 
         #endregion
 
+        #endregion
+
+        /// <summary>
+        /// コントローラ初期化
+        /// </summary>
+        public void InitController()
+        {
+            this.UnitCommandController = new UnitCommandController(this);
+            this.UnitCommandController.UnitRoot = new UnitRoot(this);
+            this.UnitRange = new UnitRange(this);
+            this.UnitRange.SetRange(this.UnitBaseStatus.MainCommand, this.UnitBaseStatus.SubCommand, this.MainRange, this.SubRange, 0, this.InvalidRange);
+        }
     }
 }

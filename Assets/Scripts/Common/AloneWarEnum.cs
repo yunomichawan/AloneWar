@@ -111,6 +111,12 @@ namespace AloneWar.Common
         LowHp,
         TargetMain,
         Simple,
+        Fool,
+        /// <summary>
+        /// 以下、初期開発では実装しない
+        /// </summary>
+        Cooperation,
+        SacrificedPiece,
     }
 
     /// <summary>

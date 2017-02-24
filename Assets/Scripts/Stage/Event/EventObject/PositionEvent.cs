@@ -26,9 +26,9 @@ namespace AloneWar.Stage.Event.EventObject
         /// ・inspector上で設定した配列を返すようにする
         /// ・ソース上で値を宣言する
         /// </summary>
-        public override EventTriggerCategory[] VaildEventTrigger { get { return this.vaildEventTrigger; } }
+        public override EventTriggerCategory[] ValidEventTrigger { get { return this.validEventTrigger; } }
 
-        public EventTriggerCategory[] vaildEventTrigger;
+        public EventTriggerCategory[] validEventTrigger;
 
         /// <summary>
         /// コンストラクタ
@@ -47,16 +47,16 @@ namespace AloneWar.Stage.Event.EventObject
             base.EventTask();
         }
 
-        public bool SetVaildEvent(int positionId)
+        public bool SetValidEvent(int positionId)
         {
-            if (this.VaildFlg)
+            if (this.ValidFlg)
             {
-                if (this.IsVaildPositionId(positionId))
+                if (this.IsValidPositionId(positionId))
                 {
                     this.EnqueueEventTask();
                     return true;
                 }
-                else if (this.IsVaildArea(StageManager.Instance.StageInformation.GetPositionArea(positionId)))
+                else if (this.IsValidArea(StageManager.Instance.StageInformation.GetPositionArea(positionId)))
                 {
                     this.EnqueueEventTask();
                     return true;
@@ -66,12 +66,12 @@ namespace AloneWar.Stage.Event.EventObject
             return false;
         }
 
-        private bool IsVaildPositionId(int positionId)
+        private bool IsValidPositionId(int positionId)
         {
             return this.PositionEventSender.PositionIdArray.Contains(positionId);
         }
 
-        private bool IsVaildArea(string area)
+        private bool IsValidArea(string area)
         {
             return this.PositionEventSender.AreaArray.Contains(area);
         }

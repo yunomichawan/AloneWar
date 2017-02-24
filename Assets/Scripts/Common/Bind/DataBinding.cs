@@ -20,8 +20,12 @@ namespace AloneWar.Common.Bind
         public static List<T> DataTableToObjectList(DataTable table)
         {
             List<T> objectList = new List<T>();
+
+            // debug code
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
+            // debug code
+
             foreach (DataRow row in table.Rows)
             {
                 T obj = (T)Activator.CreateInstance(typeof(T), new object[] { });
@@ -29,8 +33,11 @@ namespace AloneWar.Common.Bind
                 objectList.Add(obj);
             }
 
+            // debug code
             sw.Stop();
             Console.WriteLine("async end" + sw.Elapsed.ToString());
+            // debug code
+
             return objectList;
         }
         

@@ -180,7 +180,7 @@ Project
 |	|	|-ADV											…　ADVUI周り
 |	|	|-Common										…　UI共通実装
 |	|
-|	|-Unit												…　ユニット周り
+|	|-Unit												…　ユニット素材
 |	|	|-Grow											…　成長
 |	|	|-Status										…　ステータス
 |	|	|-UnitAI										…　AI
@@ -439,16 +439,18 @@ Editor
 ・ユニットが座標移動を行った場合、移動前の座標を範囲に設定していたユニットの範囲を再設定する。
 
 □AI作成
-種類
+種類(兼移動決定の指針)
 ・Wait
 ・InRange
 ・LowHp
 ・TargetMain
 ・Simple
+・Fool
 攻撃決定の優先順位
 ・メイン
 ・キル
 ・攻撃範囲外
+・与ダメージ
 ・生存
 ・その他
 ・オブジェクト

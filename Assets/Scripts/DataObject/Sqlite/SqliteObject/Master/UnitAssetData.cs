@@ -12,6 +12,9 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
     public class UnitAssetData : SqliteBaseData
     {
         [SqliteProperty]
+        public int UnitId { get; set; }
+
+        [SqliteProperty]
         public string PrefabId { get; set; }
 
         [SqliteProperty]

@@ -20,12 +20,6 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
         public int UnitId { get; set; }
 
         [SqliteProperty]
-        public int Level { get; set; }
-
-        [SqliteProperty]
-        public int AiCategory { get; set; }
-
-        [SqliteProperty]
         public int PositionId { get; set; }
 
         [SqliteProperty]
