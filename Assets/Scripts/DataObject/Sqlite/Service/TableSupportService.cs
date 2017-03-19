@@ -64,14 +64,17 @@ namespace AloneWar.DataObject.Sqlite.Service
             typeList.ForEach(t =>
             {
                 DataAccessAttribute dataAccess = t.GetAttribute<DataAccessAttribute>();
-                switch (dataAccess.DbName)
+                if(dataAccess != null)
                 {
-                    case AloneWarConst.SqliteDataBaseName.MasterDb:
-                        callback(t, dataAccess, masterTableNameInfoList);
-                        break;
-                    case AloneWarConst.SqliteDataBaseName.TransactionDb:
-                        callback(t, dataAccess, tranTableNameInfoList);
-                        break;
+                    switch (dataAccess.DbName)
+                    {
+                        case AloneWarConst.SqliteDataBaseName.MasterDb:
+                            callback(t, dataAccess, masterTableNameInfoList);
+                            break;
+                        case AloneWarConst.SqliteDataBaseName.TransactionDb:
+                            callback(t, dataAccess, tranTableNameInfoList);
+                            break;
+                    }
                 }
             });
         }
@@ -95,7 +98,7 @@ namespace AloneWar.DataObject.Sqlite.Service
             Type[] types = assembly.GetTypes();
             return types.Where(t =>
             {
-                if (string.IsNullOrEmpty(t.Namespace))
+                if (!string.IsNullOrEmpty(t.Namespace))
                 {
                     return t.Namespace.Contains(dbNamespace);
                 }

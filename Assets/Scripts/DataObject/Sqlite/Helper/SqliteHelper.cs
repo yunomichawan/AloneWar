@@ -101,7 +101,7 @@ namespace AloneWar.DataObject.Sqlite.Helper
             SqliteQueryBuilder sqliteQueryBuilder = new SqliteQueryBuilder();
             sqliteQueryBuilder.CreateTableCheckSql(tableType);
             SqliteCounter sqliteCounter = this.ExecuteQuery<SqliteCounter>(sqliteQueryBuilder).First();
-            return !sqliteCounter.Count.Equals(0);
+            return sqliteCounter.Count > 0;
         }
 
         public void CreateSqliteTable(Type tableType)
@@ -134,9 +134,9 @@ namespace AloneWar.DataObject.Sqlite.Helper
             try
             {
                 SqliteDatabase sqliteDatabase = this.CreateConenctInstance(sqliteQueryBuilder);
+                Debug.Log(sqliteQueryBuilder.ExecutetSql.ToString());
                 // sql実行
                 List<T> dataList = sqliteDatabase.ExecuteQueryToObject<T>(sqliteQueryBuilder.ExecutetSql.ToString());
-                Debug.Log(sqliteQueryBuilder.ExecutetSql.ToString());
                 return dataList;
             }
             catch (Exception e)
@@ -150,9 +150,9 @@ namespace AloneWar.DataObject.Sqlite.Helper
             try
             {
                 SqliteDatabase sqliteDatabase = this.CreateConenctInstance(sqliteQueryBuilder);
+                Debug.Log(sqliteQueryBuilder.ExecutetSql.ToString());
                 // sql実行
                 DataTable dataTable = sqliteDatabase.ExecuteQueryToDataTable(sqliteQueryBuilder.ToString());
-                Debug.Log(sqliteQueryBuilder.ExecutetSql.ToString());
                 return dataTable;
             }
             catch (Exception e)
@@ -167,9 +167,9 @@ namespace AloneWar.DataObject.Sqlite.Helper
             {
                 // db接続(共通化すること)
                 SqliteDatabase sqliteDatabase = this.CreateConenctInstance(sqliteQueryBuilder);
+                Debug.Log(sqliteQueryBuilder.ExecutetSql.ToString());
                 // sql実行
                 sqliteDatabase.ExecuteNonQuery(sqliteQueryBuilder.ExecutetSql.ToString());
-                Debug.Log(sqliteQueryBuilder.ExecutetSql.ToString());
             }
             catch (Exception e)
             {
