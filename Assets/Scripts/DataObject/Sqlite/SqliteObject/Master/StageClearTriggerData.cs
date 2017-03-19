@@ -8,7 +8,7 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
     /// <summary>
     /// 
     /// </summary>
-    [DataAccess("StageClearTriggerData", AloneWarConst.SqliteDataBaseName.Master)]
+    [DataAccess("StageClearTriggerData", AloneWarConst.SqliteDataBaseName.MasterDb)]
     public class StageClearTriggerData : SqliteBaseData
     {
         [SqliteProperty]

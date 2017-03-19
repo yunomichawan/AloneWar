@@ -8,7 +8,7 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Transaction
     /// <summary>
     /// 
     /// </summary>
-    [DataAccess("EventStatusData", AloneWarConst.SqliteDataBaseName.Transaction)]
+    [DataAccess("EventStatusData", AloneWarConst.SqliteDataBaseName.TransactionDb)]
     public class EventStatusData : SqliteBaseData
     {
         [SqliteProperty]

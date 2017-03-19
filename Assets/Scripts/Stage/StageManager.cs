@@ -1,5 +1,6 @@
 ﻿using AloneWar.Common;
 using AloneWar.Common.Component;
+using AloneWar.Common.Component.Operation;
 using AloneWar.Common.Extensions;
 using AloneWar.DataObject.Json.Helper;
 using AloneWar.DataObject.Sqlite.SqliteObject.Base;
@@ -88,10 +89,11 @@ namespace AloneWar.Stage
             // Field
             StageBuilder stageBuilder = new StageBuilder(this.StageInformation, this.unitParent, this.stageParent);
             stageBuilder.CreateStage();
+            
         }
 
         /// <summary>
-        /// 
+        /// 対象座標を範囲に含んでいるユニットの範囲を再設定
         /// </summary>
         /// <param name="positionId"></param>
         public void UnitRangeInit(int positionId)
@@ -99,9 +101,9 @@ namespace AloneWar.Stage
             this.StageInformation.UnitSubComponentList.Values.ToList().ForEach(u =>
             {
                 // 移動が行われた場合、範囲を再設定
-                u.UnitRange.ResetRange(positionId);
+                u.StageRange.ResetRange(positionId);
             });
-            this.StageInformation.UnitMainComponent.UnitRange.ResetRange(positionId);
+            this.StageInformation.UnitMainComponent.StageRange.ResetRange(positionId);
         }
 
         /// <summary>

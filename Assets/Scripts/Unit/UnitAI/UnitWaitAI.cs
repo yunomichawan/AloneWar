@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using AloneWar.Unit.Component;
-using AloneWar.Unit.UnitAI.Base;
 using AloneWar.Common;
 using AloneWar.Stage;
 
@@ -23,20 +22,19 @@ namespace AloneWar.Unit.UnitAI
 
         }
 
-        public override void SetAITask()
+        public override void SetTarget()
         {
-            this.UnitSubComponent.UnitRange.SetRange(CommandCategory.Attack, CommandCategory.None, this.UnitSubComponent.SubRange, 0, this.UnitSubComponent.InvalidRange, 0);
-            this.SetTarget();
-            // Dubug Code
-            StageManager.Instance.TaskQueue.Enqueue(null);
+            this.UnitSubComponent.StageRange.SetRange(CommandCategory.Attack, CommandCategory.None, this.UnitSubComponent.SubRange, 0, this.UnitSubComponent.InvalidRange, 0);
+            base.SetTarget();
         }
 
         /// <summary>
         ///  座標決定
         /// </summary>
-        protected override void SearchUnitFromAI()
+        protected override void SetMoveTarget()
         {
-            this.TargetMovePosition = this.UnitSubComponent.PositionId;
+            // 移動を行わない
+            this.TargetMovePosition = AloneWarConst.ErrorPositionId;
         }
     }
 }

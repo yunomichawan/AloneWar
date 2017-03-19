@@ -5,7 +5,7 @@ using AloneWar.DataObject.Sqlite.SqliteAttributes;
 
 namespace AloneWar.DataObject.Sqlite.SqliteObject.Transaction
 {
-    [DataAccess("StageHistorydData", AloneWarConst.SqliteDataBaseName.Transaction)]
+    [DataAccess("StageHistorydData", AloneWarConst.SqliteDataBaseName.TransactionDb)]
     public class StageHistorydData : SqliteBaseData
     {
         [SqliteProperty]

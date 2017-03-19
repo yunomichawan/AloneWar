@@ -5,6 +5,7 @@ using AloneWar.Stage.FieldObject;
 using AloneWar.Unit.Component;
 using System.Collections.Generic;
 using System.Linq;
+using AloneWar.Stage.Controller.Range;
 using UnityEngine;
 
 namespace AloneWar.Stage.Controller.Unit
@@ -99,7 +100,7 @@ namespace AloneWar.Stage.Controller.Unit
         public void SetRange(CommandCategory mainCommand, CommandCategory subCommand, int mainRange, int subRange, int invalidMainRange = 0, int invalidSubRange = 0)
         {
             this.InitRange(mainCommand, subCommand, mainRange, subRange, invalidMainRange, invalidSubRange);
-            int positionId = this.UnitBaseComponent.UnitBaseStatus.StageStatus.PositionId;
+            int positionId = this.UnitBaseComponent.PositionId;
 
             RangeCommand massRange = new RangeCommand(this.UnitBaseComponent.UnitBaseStatus.StageStatus.UnitSide, positionId, this.MainRange, this.InvalidMainRange);
             this.MainRangeCommandList.Add(massRange.MassComponent.PositionId, massRange);
@@ -160,7 +161,7 @@ namespace AloneWar.Stage.Controller.Unit
         {
             if (!rangeCommandList0.ContainsKey(rangeCommand.MassComponent.PositionId) && !rangeCommandList1.ContainsKey(rangeCommand.MassComponent.PositionId))
             {
-                if (rangeCommand.IsValidRange && rangeCommand.IsValidRangeUnit)
+                if (rangeCommand.IsValidSettingRange && rangeCommand.IsValidRangeUnit)
                 {
                     rangeCommandList0.Add(rangeCommand.MassComponent.PositionId, rangeCommand);
                     return true;
@@ -218,7 +219,7 @@ namespace AloneWar.Stage.Controller.Unit
         {
             if (this.MainRangeCommandList.ContainsKey(positionId))
             {
-                this.SetRange(this.UnitBaseComponent.UnitBaseStatus.MainCommand, this.UnitBaseComponent.UnitBaseStatus.SubCommand, this.UnitBaseComponent.MainRange, this.UnitBaseComponent.SubRange, 0, this.UnitBaseComponent.InvalidRange);
+                this.SetRange(this.UnitBaseComponent.MainCommand, this.UnitBaseComponent.SubCommand, this.UnitBaseComponent.MainRange, this.UnitBaseComponent.SubRange, 0, this.UnitBaseComponent.InvalidRange);
             }
         }
 
@@ -235,7 +236,7 @@ namespace AloneWar.Stage.Controller.Unit
             List<int> subKeys = this.SubRangeCommandList.Keys.ToList();
             mainKeys.AddRange(subKeys);
 
-            return StageManager.Instance.StageInformation.SearchUnitComponent(mainKeys, unitSideCategory);
+            return StageManager.Instance.StageInformation.SearchUnit(mainKeys, unitSideCategory);
         }
     }
 }

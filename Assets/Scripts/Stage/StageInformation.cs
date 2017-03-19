@@ -1,4 +1,5 @@
 ﻿using AloneWar.Common;
+using AloneWar.Common.Extensions;
 using AloneWar.Common.Component;
 using AloneWar.DataObject.Sqlite.SqliteObject.Master;
 using AloneWar.DataObject.Sqlite.SqliteObject.Transaction;
@@ -74,43 +75,83 @@ namespace AloneWar.Stage
         private Dictionary<int, MassComponent> massComponentList = new Dictionary<int, MassComponent>();
 
         /// <summary>
-        /// /
+        /// 
         /// </summary>
         public Dictionary<int, UnitSubComponent> UnitSubComponentList { get { return this.unitSubComponentList; } set { this.unitSubComponentList = value; } }
         private Dictionary<int, UnitSubComponent> unitSubComponentList = new Dictionary<int, UnitSubComponent>();
+
+        #endregion
+
+        #region Method
+
+        #region Search
+
+        /* 実装メモ
+         * 増えすぎた場合
+         * ・仕様箇所が少ない関数は削除し、コールバック引数をpublicとする
+         */
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="positionIdArray"></param>
+        /// <param name="unitSideCategory"></param>
         /// <returns></returns>
-        public UnitSummaryComponent SearchUnitComponent(List<int> positionIdArray, UnitSideCategory unitSideCategory)
+        public UnitSummaryComponent SearchUnit(List<int> positionIdArray, UnitSideCategory unitSideCategory)
+        {
+            return this.SearchUnit(b => b.UnitSide.Equals(unitSideCategory) && positionIdArray.Contains(b.PositionId));
+        }
+
+        /// <summary>
+        /// ユニットサイド検索
+        /// </summary>
+        /// <param name="unitSideCategory"></param>
+        /// <returns></returns>
+        public UnitSummaryComponent SearchUnit(UnitSideCategory unitSideCategory)
+        {
+            return this.SearchUnit(b => b.UnitSide.Equals(unitSideCategory));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="positionId"></param>
+        /// <param name="unitSideCategory"></param>
+        /// <returns></returns>
+        public UnitSummaryComponent SearchUnit(int positionId, UnitSideCategory unitSideCategory)
+        {
+            return this.SearchUnit(b => b.UnitSide.Equals(unitSideCategory) && b.PositionId.Equals(positionId));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="positionId"></param>
+        /// <returns></returns>
+        public UnitSummaryComponent SearchUnit(int positionId)
+        {
+            return this.SearchUnit(b => b.PositionId.Equals(positionId));
+        }
+
+        /// <summary>
+        /// 条件を満たすユニットを検索
+        /// publicにしても問題ないのでは？
+        /// </summary>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        private UnitSummaryComponent SearchUnit(Func<UnitBaseComponent, bool> func)
         {
             UnitSummaryComponent unitSummaryComponent = new UnitSummaryComponent();
-
-            foreach (int positionId in positionIdArray)
+            unitSummaryComponent.UnitSubComponentList = this.UnitSubComponentList.Values.Where(u => func(u)).ToList();
+            if (func(this.UnitMainComponent))
             {
-                if (this.UnitMainComponent.UnitMainStatus.StageStatus.PositionId.Equals(positionId))
-                {
-                    unitSummaryComponent.UnitMainComponent = this.UnitMainComponent;
-                }
-
-                if (this.UnitSubComponentList.ContainsKey(positionId))
-                {
-                    UnitSubComponent unitSubComponent = this.UnitSubComponentList[positionId];
-                    if (unitSubComponent.UnitBaseStatus.StageStatus.UnitSide.Equals(unitSideCategory))
-                    {
-                        unitSummaryComponent.UnitSubComponentList.Add(unitSubComponent);
-                    }
-                }
+                unitSummaryComponent.UnitMainComponent = this.UnitMainComponent;
             }
 
             return unitSummaryComponent;
         }
 
         #endregion
-
-        #region Method
 
         /// <summary>
         /// 
@@ -258,6 +299,46 @@ namespace AloneWar.Stage
         public List<int> GetDistaceAwayPositionList(int positionId, int distance, Func<int, bool> getCondition = null)
         {
             List<int> positionList = new List<int>();
+
+            this.SearchDistaceAwayPosition(positionId, distance, (id) =>
+            {
+                if (this.DistancePositionValid(id, getCondition))
+                {
+                    positionList.Add(id);
+                }
+                return false;
+            });
+
+            return positionList;
+        }
+
+        /// <summary>
+        /// 対象座標から離れた距離に有効な座標が存在するかどうか
+        /// </summary>
+        /// <param name="positionId"></param>
+        /// <param name="distance"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public bool IsValidDistanceRange(int positionId, int distance, Func<int, bool> condition)
+        {
+            bool isValid = false;
+            this.SearchDistaceAwayPosition(positionId, distance, (id) =>
+            {
+                isValid = condition(id);
+                return isValid;
+            });
+
+            return isValid;
+        }
+
+        /// <summary>
+        /// 座標ループをこの関数内で共通化させる
+        /// </summary>
+        /// <param name="positionId"></param>
+        /// <param name="distance"></param>
+        /// <param name="breakLoppCallback">int = positionId</param>
+        private void SearchDistaceAwayPosition(int positionId, int distance, Func<int,bool> breakLoppCallback)
+        {
             int range0 = distance;
             int range1 = 0;
             int x = this.GetPositionX(positionId);
@@ -266,43 +347,42 @@ namespace AloneWar.Stage
             while (range0 > 0)
             {
                 // top - right
-                this.AddDistancePositionIfValid(positionList, this.GetPositionId(x + range1, y - range0));
+                if (breakLoppCallback(this.GetPositionId(x + range1, y - range0)))
+                    break;
                 // right - bottom
-                this.AddDistancePositionIfValid(positionList, this.GetPositionId(x + range0, y + range1));
+                if (breakLoppCallback(this.GetPositionId(x + range0, y + range1)))
+                    break;
                 // bottom - left
-                this.AddDistancePositionIfValid(positionList, this.GetPositionId(x - range1, y + range0));
+                if (breakLoppCallback(this.GetPositionId(x - range1, y + range0)))
+                    break;
                 // left - top
-                this.AddDistancePositionIfValid(positionList, this.GetPositionId(x - range0, y - range1));
+                if (breakLoppCallback(this.GetPositionId(x - range0, y - range1)))
+                    break;
 
                 range0--;
                 range1++;
             }
-
-            return positionList;
         }
 
         /// <summary>
-        /// 座標が有効であれば座標をリストに追加
+        /// 座標が有効/無効
         /// </summary>
-        /// <param name="positionList"></param>
         /// <param name="positionId"></param>
-        /// <param name="getCondition"></param>
-        private void AddDistancePositionIfValid(List<int> positionList, int positionId, Func<int, bool> getCondition = null)
+        /// <param name="condition">条件</param>
+        private bool DistancePositionValid(int positionId, Func<int, bool> condition)
         {
             if (!positionId.Equals(AloneWarConst.ErrorPositionId))
             {
-                if (getCondition != null)
+                if (condition != null)
                 {
-                    if (getCondition(positionId))
-                    {
-                        positionList.Add(positionId);
-                    }
+                    return condition(positionId);
                 }
                 else
                 {
-                    positionList.Add(positionId);
+                    return true;
                 }
             }
+            return false;
         }
 
         #endregion

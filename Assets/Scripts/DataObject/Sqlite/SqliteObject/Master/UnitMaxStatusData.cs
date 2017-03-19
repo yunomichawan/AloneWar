@@ -8,7 +8,7 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
     /// <summary>
     /// 
     /// </summary>
-    [DataAccess("UnitMaxStatusData", AloneWarConst.SqliteDataBaseName.Master)]
+    [DataAccess("UnitMaxStatusData", AloneWarConst.SqliteDataBaseName.MasterDb)]
     public class UnitMaxStatusData 
     {
         [SqliteProperty]

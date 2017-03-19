@@ -8,7 +8,7 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
     /// <summary>
     /// マスター(コード類の管理)
     /// </summary>
-    [DataAccess("MasterCodeData", AloneWarConst.SqliteDataBaseName.Master)]
+    [DataAccess("MasterCodeData", AloneWarConst.SqliteDataBaseName.MasterDb)]
     public class MasterCodeData : SqliteBaseData, IDefaultSort
     {
         [SqliteProperty]

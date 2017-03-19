@@ -8,7 +8,7 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
     /// <summary>
     /// 
     /// </summary>
-    [DataAccess("UnitGrowMasterData", AloneWarConst.SqliteDataBaseName.Master)]
+    [DataAccess("UnitGrowMasterData", AloneWarConst.SqliteDataBaseName.MasterDb)]
     public class UnitGrowMasterData : SqliteBaseData
     {
         [SqliteProperty]

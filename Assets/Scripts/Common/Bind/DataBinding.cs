@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -20,24 +21,14 @@ namespace AloneWar.Common.Bind
         public static List<T> DataTableToObjectList(DataTable table)
         {
             List<T> objectList = new List<T>();
-
-            // debug code
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-            sw.Start();
-            // debug code
-
+            
             foreach (DataRow row in table.Rows)
             {
                 T obj = (T)Activator.CreateInstance(typeof(T), new object[] { });
                 DataRowToObject(row, obj);
                 objectList.Add(obj);
             }
-
-            // debug code
-            sw.Stop();
-            Console.WriteLine("async end" + sw.Elapsed.ToString());
-            // debug code
-
+            
             return objectList;
         }
         
@@ -140,6 +131,28 @@ namespace AloneWar.Common.Bind
             {
                 Debug.Log(ex.Message + propertyInfo.Name);
             }
+        }
+    }
+
+    /// <summary>
+    /// 匿名リストバインダー
+    /// </summary>
+    public class DataAnonymousBinding
+    {
+        public static IList DataTableToObjectList(DataTable table, Type type)
+        {
+            Type listType = typeof(List<>);
+            Type tListType = listType.MakeGenericType(type);
+            IList objectList = (IList)Activator.CreateInstance(tListType, new object[] { });
+
+            foreach (DataRow row in table.Rows)
+            {
+                object obj = Activator.CreateInstance(type, new object[] { });
+                DataBinding<object>.DataRowToObject(row, obj);
+                objectList.Add(obj);
+            }
+
+            return objectList;
         }
     }
 }

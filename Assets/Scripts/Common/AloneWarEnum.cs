@@ -63,6 +63,26 @@ namespace AloneWar.Common
         SummonHalf,
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    public enum DbObjectStatus
+    {
+        Insert,
+        Update,
+        Delete,
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public enum GameObjectCategory
+    {
+        Unit,
+        Mass,
+        Unknown,
+    }
+
     #region Sqlite Master Code
 
     /// <summary>
@@ -108,7 +128,6 @@ namespace AloneWar.Common
     {
         Wait,
         InRange,
-        LowHp,
         TargetMain,
         Simple,
         Fool,
@@ -116,7 +135,11 @@ namespace AloneWar.Common
         /// 以下、初期開発では実装しない
         /// </summary>
         Cooperation,
+        /// <summary>
+        /// 犠牲
+        /// </summary>
         SacrificedPiece,
+        Escape,
     }
 
     /// <summary>

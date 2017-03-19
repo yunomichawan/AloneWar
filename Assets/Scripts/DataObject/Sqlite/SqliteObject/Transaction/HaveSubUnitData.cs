@@ -8,7 +8,7 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Transaction
     /// <summary>
     /// ユニット基本ステータス
     /// </summary>
-    [DataAccess("HaveSubUnitData", AloneWarConst.SqliteDataBaseName.Transaction)]
+    [DataAccess("HaveSubUnitData", AloneWarConst.SqliteDataBaseName.TransactionDb)]
     public class HaveSubUnitData : SqliteBaseData, IDateData
     {
         [SqliteProperty]

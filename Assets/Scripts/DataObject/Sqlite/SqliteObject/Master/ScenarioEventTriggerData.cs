@@ -5,7 +5,7 @@ using AloneWar.DataObject.Sqlite.SqliteAttributes;
 
 namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
 {
-    [DataAccess("ScenarioEventTriggerData", AloneWarConst.SqliteDataBaseName.Master)]
+    [DataAccess("ScenarioEventTriggerData", AloneWarConst.SqliteDataBaseName.MasterDb)]
     public class ScenarioEventTriggerData : SqliteBaseData
     {
         [SqliteProperty]

@@ -8,7 +8,7 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
     /// <summary>
     /// 
     /// </summary>
-    [DataAccess("UnitStagePlacementData", AloneWarConst.SqliteDataBaseName.Master)]
+    [DataAccess("UnitStagePlacementData", AloneWarConst.SqliteDataBaseName.MasterDb)]
     public class UnitStagePlacementData : SqliteBaseData
     {
         #region SqliteProperty

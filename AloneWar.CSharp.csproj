@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.5.0f3</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion Condition=" '$(VisualStudioVersion)' != '10.0' ">4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -82,9 +84,16 @@
     <Compile Include="Assets\Scripts\Common\Bind\BinderDelegate.cs" />
     <Compile Include="Assets\Scripts\Common\Bind\DataBinding.cs" />
     <Compile Include="Assets\Scripts\Common\Bind\GuiDataBinding.cs" />
-    <Compile Include="Assets\Scripts\Common\Component\SceneCommonComponent.cs" />
+    <Compile Include="Assets\Scripts\Common\Component\Operation\BaseUserOperation.cs" />
+    <Compile Include="Assets\Scripts\Common\Component\Operation\IUserOperation.cs" />
+    <Compile Include="Assets\Scripts\Common\Component\Operation\OperationComponent.cs" />
+    <Compile Include="Assets\Scripts\Common\Component\Operation\State\BaseOperationState.cs" />
+    <Compile Include="Assets\Scripts\Common\Component\Operation\State\MouseState.cs" />
+    <Compile Include="Assets\Scripts\Common\Component\Operation\State\OperationStateInfo.cs" />
+    <Compile Include="Assets\Scripts\Common\Component\Operation\State\TouchState.cs" />
     <Compile Include="Assets\Scripts\Common\Component\SingletonComponent.cs" />
     <Compile Include="Assets\Scripts\Common\Component\SingletonTaskComponent.cs" />
+    <Compile Include="Assets\Scripts\Common\Component\TransactionComponent.cs" />
     <Compile Include="Assets\Scripts\Common\Extensions\CommonExtensions.cs" />
     <Compile Include="Assets\Scripts\Common\Extensions\UnityExtensions.cs" />
     <Compile Include="Assets\Scripts\Common\ResourceManager.cs" />
@@ -92,11 +101,11 @@
     <Compile Include="Assets\Scripts\Common\TaskHelper\TaskCoroutineBeahavior.cs" />
     <Compile Include="Assets\Scripts\DataObject\ForeignKeyObject.cs" />
     <Compile Include="Assets\Scripts\DataObject\Json\Helper\JsonSerialization.cs" />
+    <Compile Include="Assets\Scripts\DataObject\SaveDataManager.cs" />
     <Compile Include="Assets\Scripts\DataObject\Sqlite\Helper\DataTable.cs" />
     <Compile Include="Assets\Scripts\DataObject\Sqlite\Helper\SqliteDatabase.cs" />
     <Compile Include="Assets\Scripts\DataObject\Sqlite\Helper\SqliteHelper.cs" />
     <Compile Include="Assets\Scripts\DataObject\Sqlite\Helper\SqliteQueryBuilder.cs" />
-    <Compile Include="Assets\Scripts\DataObject\Sqlite\Service\LoadStatusService.cs" />
     <Compile Include="Assets\Scripts\DataObject\Sqlite\Service\StageInformationService.cs" />
     <Compile Include="Assets\Scripts\DataObject\Sqlite\Service\TableSupportService.cs" />
     <Compile Include="Assets\Scripts\DataObject\Sqlite\Service\UnitStatusService.cs" />
@@ -150,13 +159,13 @@
     <Compile Include="Assets\Scripts\Stage\Component\BaseStageObject.cs" />
     <Compile Include="Assets\Scripts\Stage\Component\MassComponent.cs" />
     <Compile Include="Assets\Scripts\Stage\Controller\StageObjectController.cs" />
-    <Compile Include="Assets\Scripts\Stage\Controller\Unit\RangeCommand.cs" />
+    <Compile Include="Assets\Scripts\Stage\Controller\StageUserOperation.cs" />
     <Compile Include="Assets\Scripts\Stage\Controller\Unit\UnitAIController.cs" />
     <Compile Include="Assets\Scripts\Stage\Controller\Unit\UnitCommandController.cs" />
     <Compile Include="Assets\Scripts\Stage\Controller\Unit\UnitCommandHistory.cs" />
     <Compile Include="Assets\Scripts\Stage\Controller\Unit\UnitRange.cs" />
     <Compile Include="Assets\Scripts\Stage\Controller\Unit\UnitRoot.cs" />
-    <Compile Include="Assets\Scripts\Stage\Event\EventObject\Base\BaseStageEvent.cs" />
+    <Compile Include="Assets\Scripts\Stage\Event\EventObject\BaseStageEvent.cs" />
     <Compile Include="Assets\Scripts\Stage\Event\EventObject\PositionEvent.cs" />
     <Compile Include="Assets\Scripts\Stage\Event\EventObject\UnitEvent.cs" />
     <Compile Include="Assets\Scripts\Stage\Event\Sender\Base\BaseEventSender.cs" />
@@ -165,11 +174,14 @@
     <Compile Include="Assets\Scripts\Stage\Event\Sender\UnitEventSender.cs" />
     <Compile Include="Assets\Scripts\Stage\FieldObject\MassStatus.cs" />
     <Compile Include="Assets\Scripts\Stage\IStagePosition.cs" />
+    <Compile Include="Assets\Scripts\Stage\Range\IRangeHandler.cs" />
+    <Compile Include="Assets\Scripts\Stage\Range\RangeCommand.cs" />
+    <Compile Include="Assets\Scripts\Stage\Range\StageRange.cs" />
     <Compile Include="Assets\Scripts\Stage\StageEventBuilder.cs" />
     <Compile Include="Assets\Scripts\Stage\StageInformation.cs" />
     <Compile Include="Assets\Scripts\Stage\StageManager.cs" />
     <Compile Include="Assets\Scripts\Stage\TunrProgression.cs" />
-    <Compile Include="Assets\Scripts\UI\Common\ListMenu\Base\BaseListMenu.cs" />
+    <Compile Include="Assets\Scripts\UI\Common\ListMenu\BaseListMenu.cs" />
     <Compile Include="Assets\Scripts\UI\Component\LabelResourceText.cs" />
     <Compile Include="Assets\Scripts\UI\Stage\UIUnitCommand.cs" />
     <Compile Include="Assets\Scripts\Unit\Component\UnitBaseComponent.cs" />
@@ -180,7 +192,7 @@
     <Compile Include="Assets\Scripts\Unit\Status\UnitMainStatus.cs" />
     <Compile Include="Assets\Scripts\Unit\Status\UnitObjectStatus.cs" />
     <Compile Include="Assets\Scripts\Unit\Status\UnitSubStatus.cs" />
-    <Compile Include="Assets\Scripts\Unit\UnitAI\Base\UnitBaseAI.cs" />
+    <Compile Include="Assets\Scripts\Unit\UnitAI\UnitBaseAI.cs" />
     <Compile Include="Assets\Scripts\Unit\UnitAI\UnitWaitAI.cs" />
   </ItemGroup>
   <ItemGroup>

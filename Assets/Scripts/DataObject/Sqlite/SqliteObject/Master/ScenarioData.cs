@@ -8,7 +8,7 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
     /// <summary>
     /// シナリオテーブル
     /// </summary>
-    [DataAccess("ScenarioData", AloneWarConst.SqliteDataBaseName.Master)]
+    [DataAccess("ScenarioData", AloneWarConst.SqliteDataBaseName.MasterDb)]
     public class ScenarioData : SqliteBaseData
     {
 

@@ -20,28 +20,6 @@ namespace AloneWar.Unit.Status
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public CommandCategory MainCommand
-        {
-            get
-            {
-                return this.BaseStatus.MainCommand;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public CommandCategory SubCommand
-        {
-            get
-            {
-                return this.BaseStatus.SubCommand;
-            }
-        }
-
         #endregion
 
         public UnitBaseStatusData BaseStatus { get; set; }

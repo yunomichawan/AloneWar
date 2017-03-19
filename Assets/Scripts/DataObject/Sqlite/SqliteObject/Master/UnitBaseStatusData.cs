@@ -8,7 +8,7 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
     /// <summary>
     /// ユニット基本ステータス
     /// </summary>
-    [DataAccess("UnitBaseStatusData", AloneWarConst.SqliteDataBaseName.Master)]
+    [DataAccess("UnitBaseStatusData", AloneWarConst.SqliteDataBaseName.MasterDb)]
     public class UnitBaseStatusData : SqliteBaseData
     {
         #region

@@ -8,7 +8,7 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Transaction
     /// <summary>
     /// ユニット使用履歴
     /// </summary>
-    [DataAccess("UnitUsedHistoryData", AloneWarConst.SqliteDataBaseName.Transaction)]
+    [DataAccess("UnitUsedHistoryData", AloneWarConst.SqliteDataBaseName.TransactionDb)]
     public class UnitUsedHistoryData : SqliteBaseData
     {
         [SqliteProperty]

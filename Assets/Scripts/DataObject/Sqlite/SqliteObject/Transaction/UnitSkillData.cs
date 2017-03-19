@@ -5,7 +5,7 @@ using AloneWar.DataObject.Sqlite.SqliteAttributes;
 
 namespace AloneWar.DataObject.Sqlite.SqliteObject.Transaction
 {
-    [DataAccess("UnitSkillData", AloneWarConst.SqliteDataBaseName.Transaction)]
+    [DataAccess("UnitSkillData", AloneWarConst.SqliteDataBaseName.TransactionDb)]
     public class UnitSkillData : SqliteBaseData,IForeignKey
     {
         #region SqliteProperty

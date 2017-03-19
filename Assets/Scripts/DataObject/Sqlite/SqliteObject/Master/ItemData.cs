@@ -8,7 +8,7 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
     /// <summary>
     /// アイテム管理テーブル
     /// </summary>
-    [DataAccess("ItemData", AloneWarConst.SqliteDataBaseName.Master)]
+    [DataAccess("ItemData", AloneWarConst.SqliteDataBaseName.MasterDb)]
     public class ItemData : SqliteBaseData, IDefaultSort
     {
         [SqliteProperty]

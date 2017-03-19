@@ -1,6 +1,7 @@
 ﻿using AloneWar.Common;
 using AloneWar.DataObject.Sqlite.SqliteObject.Base;
 using AloneWar.Stage.Component;
+using AloneWar.Stage.Controller.Range;
 using AloneWar.Stage.FieldObject;
 using AloneWar.Unit.Component;
 using System.Collections.Generic;
@@ -105,7 +106,7 @@ namespace AloneWar.Stage.Controller.Unit
             int positionId = this.UnitBaseComponent.PositionId;
             rangeCommand.DirectionList.ForEach(d => {
                 positionId = StageManager.Instance.StageInformation.GetDirectionPositionId(positionId, d);
-                this.AddRootAndOther(this.UnitBaseComponent.UnitRange.MainRangeCommandList[positionId]);
+                this.AddRootAndOther(this.UnitBaseComponent.StageRange.MainRangeCommandList[positionId]);
             }); 
         }
 
@@ -115,7 +116,7 @@ namespace AloneWar.Stage.Controller.Unit
         /// <param name="rangeCommand"></param>
         public void SetNewRoot(int targetPositionId)
         {
-            RangeCommand rangeCommand = this.UnitBaseComponent.UnitRange.MainRangeCommandList[targetPositionId];
+            RangeCommand rangeCommand = this.UnitBaseComponent.StageRange.MainRangeCommandList[targetPositionId];
             this.SetNewRoot(rangeCommand);
         }
 

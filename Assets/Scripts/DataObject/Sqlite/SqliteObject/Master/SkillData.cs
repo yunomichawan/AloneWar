@@ -8,7 +8,7 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
     /// <summary>
     /// スキル管理テーブル
     /// </summary>
-    [DataAccess("SkillData", AloneWarConst.SqliteDataBaseName.Master)]
+    [DataAccess("SkillData", AloneWarConst.SqliteDataBaseName.MasterDb)]
     public class SkillData : SqliteBaseData,IDefaultSort
     {
         [SqliteProperty]

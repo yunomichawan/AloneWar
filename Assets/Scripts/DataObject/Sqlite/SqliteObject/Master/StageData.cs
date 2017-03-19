@@ -8,7 +8,7 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
     /// <summary>
     /// ステージ管理テーブル
     /// </summary>
-    [DataAccess("StageData", AloneWarConst.SqliteDataBaseName.Master)]
+    [DataAccess("StageData", AloneWarConst.SqliteDataBaseName.MasterDb)]
     public class StageData : SqliteBaseData, IDefaultSort
     {
         /// <summary>

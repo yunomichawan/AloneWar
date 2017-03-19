@@ -18,12 +18,36 @@ namespace AloneWar.Stage.Controller
 {
     public class StageObjectController : MonoBehaviour
     {
-        
-        
-
-        public void UpdateObjectPosition(BaseStageObject baseStageObject, int positionId)
+        /// <summary>
+        /// 
+        /// </summary>
+        public static StageObjectController Instance
         {
+            get
+            {
+                return StageManager.Instance.stageObjectController;
+            }
+        }
 
+        /// <summary>
+        /// 汎用移動イベント
+        /// </summary>
+        public List<PositionEvent> MoveEvent { get { return this.moveEvent; } set { this.moveEvent = value; } }
+        private List<PositionEvent> moveEvent = new List<PositionEvent>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="baseStageObject"></param>
+        /// <param name="positionId"></param>
+        public void UpdateUnitPosition(UnitBaseComponent unitBaseComponent, int positionId)
+        {
+            unitBaseComponent.UnitBaseStatus.StageStatus.BeforePositionId = unitBaseComponent.PositionId;
+            unitBaseComponent.PositionId = positionId;
+            this.MoveEvent.ForEach(m =>
+            {
+                m.SetValidEvent(positionId);
+            });
         }
     }
 }

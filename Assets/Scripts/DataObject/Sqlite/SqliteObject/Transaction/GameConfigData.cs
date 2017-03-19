@@ -8,7 +8,7 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Transaction
     /// <summary>
     /// コンフィグ
     /// </summary>
-    [DataAccess("GameConfigData", AloneWarConst.SqliteDataBaseName.Transaction)]
+    [DataAccess("GameConfigData", AloneWarConst.SqliteDataBaseName.TransactionDb)]
     public class GameConfigData : SqliteBaseData
     {
         [SqliteProperty]

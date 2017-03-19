@@ -8,7 +8,7 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Transaction
     /// <summary>
     /// 中断ステージ
     /// </summary>
-    [DataAccess("StageContinueData", AloneWarConst.SqliteDataBaseName.Transaction)]
+    [DataAccess("StageContinueData", AloneWarConst.SqliteDataBaseName.TransactionDb)]
     public class StageContinueData : SqliteBaseData
     {
         [SqliteProperty]

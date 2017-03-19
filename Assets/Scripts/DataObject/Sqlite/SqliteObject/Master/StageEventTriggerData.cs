@@ -8,7 +8,7 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
     /// <summary>
     /// ステージイベント管理テーブル
     /// </summary>
-    [DataAccess("StageEventTriggerData", AloneWarConst.SqliteDataBaseName.Master)]
+    [DataAccess("StageEventTriggerData", AloneWarConst.SqliteDataBaseName.MasterDb)]
     public class StageEventTriggerData : SqliteBaseData
     {
 

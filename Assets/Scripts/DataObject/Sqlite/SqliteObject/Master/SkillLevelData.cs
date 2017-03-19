@@ -8,7 +8,7 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
     /// <summary>
     /// 
     /// </summary>
-    [DataAccess("SkillLevelData", AloneWarConst.SqliteDataBaseName.Master)]
+    [DataAccess("SkillLevelData", AloneWarConst.SqliteDataBaseName.MasterDb)]
     public class SkillLevelData : SqliteBaseData
     {
         [SqliteProperty]

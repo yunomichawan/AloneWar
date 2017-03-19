@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using AloneWar.Stage.Event.EventObject.Base;
+using AloneWar.Common;
 
 namespace AloneWar.Stage.Component
 {
@@ -38,6 +38,8 @@ namespace AloneWar.Stage.Component
         /// オブジェクト名兼、認識ID
         /// </summary>
         public abstract int StageObjectId { get; }
+
+        public abstract GameObjectCategory GameObjectCategory { get; }
 
     }
 }

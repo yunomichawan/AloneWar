@@ -1,6 +1,5 @@
 ﻿using AloneWar.Common;
 using AloneWar.DataObject.Sqlite.SqliteObject;
-using AloneWar.Stage.Event.EventObject.Base;
 using AloneWar.DataObject.Sqlite.SqliteObject.Transaction;
 using AloneWar.DataObject.Sqlite.SqliteObject.Master;
 using AloneWar.Unit.Status;

@@ -9,7 +9,7 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
     /// 付与するパラメーター
     /// ・Item,Event,Skill,etc...more?
     /// </summary>
-    [DataAccess("StatusGrantedParamData", AloneWarConst.SqliteDataBaseName.Master)]
+    [DataAccess("StatusGrantedParamData", AloneWarConst.SqliteDataBaseName.MasterDb)]
     public class StatusGrantedParamData : SqliteBaseData
     {
         [SqliteProperty]

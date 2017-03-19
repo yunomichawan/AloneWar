@@ -8,7 +8,7 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
     /// <summary>
     /// ステージユニット用のアイテム関連付けテーブル
     /// </summary>
-    [DataAccess("UnitStageItemData", AloneWarConst.SqliteDataBaseName.Master)]
+    [DataAccess("UnitStageItemData", AloneWarConst.SqliteDataBaseName.MasterDb)]
     public class UnitStageItemData : SqliteBaseData, IForeignKey
     {
         #region SqliteProperty

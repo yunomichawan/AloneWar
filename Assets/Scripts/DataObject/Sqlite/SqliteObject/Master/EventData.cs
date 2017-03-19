@@ -5,7 +5,7 @@ using AloneWar.DataObject.Sqlite.SqliteAttributes;
 
 namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
 {
-    [DataAccess("EventData", AloneWarConst.SqliteDataBaseName.Master)]
+    [DataAccess("EventData", AloneWarConst.SqliteDataBaseName.MasterDb)]
     public class EventData : SqliteBaseData
     {
 

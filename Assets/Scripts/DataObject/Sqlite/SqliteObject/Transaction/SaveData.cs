@@ -8,7 +8,7 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Transaction
     /// <summary>
     /// 
     /// </summary>
-    [DataAccess("SaveData", AloneWarConst.SqliteDataBaseName.Transaction)]
+    [DataAccess("SaveData", AloneWarConst.SqliteDataBaseName.TransactionDb)]
     public class SaveData : SqliteBaseData, IDateData
     {
         [SqliteProperty]

@@ -18,17 +18,17 @@ namespace AloneWar.Stage
 
         public void TurnStart(TurnCategory turnCategory)
         {
-            List<UnitSubComponent> unitSubComponentList = new List<UnitSubComponent>();
+            UnitSummaryComponent unitSummaryComponent = new UnitSummaryComponent();
 
             switch (turnCategory)
             {
                 case TurnCategory.Player:
-                    unitSubComponentList = StageManager.Instance.StageInformation.UnitSubComponentList.Values.Where(u => u.UnitBaseStatus.StageStatus.UnitSide.Equals(UnitSideCategory.Player)).ToList();
+                    unitSummaryComponent = StageManager.Instance.StageInformation.SearchUnit(UnitSideCategory.Player);
                     break;
                 case TurnCategory.PlayerUnit: //
                     break;
                 case TurnCategory.Enemy:
-                    unitSubComponentList = StageManager.Instance.StageInformation.UnitSubComponentList.Values.Where(u => u.UnitBaseStatus.StageStatus.UnitSide.Equals(UnitSideCategory.Enemy)).ToList();
+                    unitSummaryComponent = StageManager.Instance.StageInformation.SearchUnit(UnitSideCategory.Enemy);
                     break;
                 case TurnCategory.EnemyUnit: //
                     break;

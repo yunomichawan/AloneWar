@@ -1,6 +1,5 @@
 ﻿using AloneWar.Stage.Event;
 using AloneWar.Stage.Event.EventObject;
-using AloneWar.Stage.Event.EventObject.Base;
 using AloneWar.Stage.FieldObject;
 using System;
 using System.Collections;
@@ -8,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using AloneWar.Common;
 
 namespace AloneWar.Stage.Component
 {
@@ -22,6 +22,14 @@ namespace AloneWar.Stage.Component
 
         public override string Area { get { return this.MassStatus.Area; } }
 
+        public override GameObjectCategory GameObjectCategory
+        {
+            get
+            {
+                return GameObjectCategory.Mass;
+            }
+        }
+        
         public MassStatus MassStatus { get; set; }
 
         public List<PositionEvent> CloseEventList { get { return this.closeEventList; } set { this.closeEventList = value; } }

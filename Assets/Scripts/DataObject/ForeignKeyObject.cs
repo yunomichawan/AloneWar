@@ -17,21 +17,24 @@ namespace AloneWar.DataObject
     {
 
         /// <summary>
-        /// 関連付けキーリスト
+        /// 
         /// </summary>
-        private List<IForeignKey> ForeignKeyList { get { return this.foreignKeyList; } set { this.foreignKeyList = value; } }
+        public List<MainT> ForeignObjectList { get; set; }
+
         /// <summary>
         /// 関連付けキーリスト
         /// </summary>
-        private List<IForeignKey> foreignKeyList = new List<IForeignKey>();
+        private List<IForeignKey> ForeignKeyList { get; set; }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        /// <param name="foreignObjectList"></param>
-        public ForeignKeyObject(List<IForeignKey> foreignObjectList)
+        /// <param name="foreignKeyList"></param>
+        public ForeignKeyObject(List<IForeignKey> foreignKeyList)
         {
-            this.ForeignKeyList = foreignObjectList;
+            this.ForeignKeyList = foreignKeyList;
+            List<int> keyList = this.ForeignKeyList.ConvertAll<int>(f => f.ForeignKey);
+            this.ForeignObjectList = TransactionComponent.Get<MainT>().Where(l => keyList.Contains(l.Id)).ToList();
         }
 
         /// <summary>
@@ -41,7 +44,7 @@ namespace AloneWar.DataObject
         /// <returns></returns>
         public MainT GetMainObject(int id)
         {
-            return SceneCommonComponent.Instance.GetMasterCommonObject<Dictionary<int,MainT>>()[id];
+            return this.ForeignObjectList.FirstOrDefault(f => f.Id.Equals(id));
         }
 
         /// <summary>
@@ -51,22 +54,8 @@ namespace AloneWar.DataObject
         /// <returns></returns>
         public MainT GetMainObject(IForeignKey foreignObject)
         {
-            return SceneCommonComponent.Instance.GetMasterCommonObject<Dictionary<int, MainT>>()[foreignObject.ForeignKey];
+            return this.ForeignObjectList.FirstOrDefault(f => f.Id.Equals(foreignObject.ForeignKey));
         }
 
-        /// <summary>
-        /// 関連付け項目に紐付く、メイン項目を全て取得
-        /// </summary>
-        /// <returns></returns>
-        public List<MainT> GetMainForeignObjectList()
-        {
-            List<MainT> mainObjectList = new List<MainT>(foreignKeyList.Count);
-            foreach (IForeignKey fk in foreignKeyList)
-            {
-                mainObjectList.Add(SceneCommonComponent.Instance.GetMasterCommonObject<Dictionary<int, MainT>>()[fk.ForeignKey]);
-            }
-
-            return mainObjectList;
-        }
     }
 }

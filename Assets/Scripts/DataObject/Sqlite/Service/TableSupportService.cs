@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Reflection;
+﻿using AloneWar.Common;
+using AloneWar.Common.Extensions;
 using AloneWar.DataObject.Sqlite.Helper;
+using AloneWar.DataObject.Sqlite.SqliteAttributes;
 using AloneWar.DataObject.Sqlite.SqliteObject.Master;
 using AloneWar.DataObject.Sqlite.SqliteObject.Transaction;
-using AloneWar.DataObject.Sqlite.SqliteAttributes;
-using AloneWar.Common;
-using AloneWar.Common.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace AloneWar.DataObject.Sqlite.Service
 {
@@ -55,14 +53,10 @@ namespace AloneWar.DataObject.Sqlite.Service
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="callback"></param>
         private void DbSetUp(Action<Type, DataAccessAttribute, List<TableNameInfo>> callback)
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            Type[] types = assembly.GetTypes();
-            List<Type> typeList = types.Where(t =>
-            {
-                return t.GetAttribute<DataAccessAttribute>() != null;
-            }).ToList();
+            List<Type> typeList = this.GetSqliteDataObjectTypeList("SqliteObject");
 
             List<TableNameInfo> masterTableNameInfoList = SqliteHelper.Instance.GetTableNameList(typeof(MasterCodeData));
             List<TableNameInfo> tranTableNameInfoList = SqliteHelper.Instance.GetTableNameList(typeof(SaveData));
@@ -72,10 +66,10 @@ namespace AloneWar.DataObject.Sqlite.Service
                 DataAccessAttribute dataAccess = t.GetAttribute<DataAccessAttribute>();
                 switch (dataAccess.DbName)
                 {
-                    case AloneWarConst.SqliteDataBaseName.Master:
+                    case AloneWarConst.SqliteDataBaseName.MasterDb:
                         callback(t, dataAccess, masterTableNameInfoList);
                         break;
-                    case AloneWarConst.SqliteDataBaseName.Transaction:
+                    case AloneWarConst.SqliteDataBaseName.TransactionDb:
                         callback(t, dataAccess, tranTableNameInfoList);
                         break;
                 }
@@ -90,5 +84,24 @@ namespace AloneWar.DataObject.Sqlite.Service
             return tableNameInfoList.Find(t => t.TableName.Equals(dataAccess.TableName)) == null;
         }
 
+        /// <summary>
+        /// 引数からSqliteObjectのタイプリストを取得
+        /// </summary>
+        /// <param name="dbNamespace"></param>
+        /// <returns></returns>
+        public List<Type> GetSqliteDataObjectTypeList(string dbNamespace)
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            Type[] types = assembly.GetTypes();
+            return types.Where(t =>
+            {
+                if (string.IsNullOrEmpty(t.Namespace))
+                {
+                    return t.Namespace.Contains(dbNamespace);
+                }
+
+                return false;
+            }).ToList();
+        }
     }
 }

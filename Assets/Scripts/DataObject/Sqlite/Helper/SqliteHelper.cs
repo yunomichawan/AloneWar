@@ -46,26 +46,26 @@ namespace AloneWar.DataObject.Sqlite.Helper
 
         #region データ操作SQL実行
 
-        public void InsertSingle(object component)
+        public void InsertSingle(SqliteBaseData component)
         {
             SqliteQueryBuilder sqliteQueryBuilder = new SqliteQueryBuilder();
             sqliteQueryBuilder.CreateInsertSql(component);
             this.ExecuteNonQuery(sqliteQueryBuilder);
         }
 
-        public void InsertMulti<T>(List<T> componetList)
+        public void InsertMulti<T>(List<T> componetList) where T : SqliteBaseData
         {
             componetList.ForEach(c => this.InsertSingle(c));
         }
 
-        public void UpdateSingle(object component)
+        public void UpdateSingle(SqliteBaseData component)
         {
             SqliteQueryBuilder sqliteQueryBuilder = new SqliteQueryBuilder();
             sqliteQueryBuilder.CreateUpdateSql(component);
             this.ExecuteNonQuery(sqliteQueryBuilder);
         }
 
-        public void UpdateMulti<T>(List<T> componetList)
+        public void UpdateMulti<T>(List<T> componetList) where T : SqliteBaseData
         {
             componetList.ForEach(c => this.UpdateSingle(c));
         }
@@ -82,7 +82,7 @@ namespace AloneWar.DataObject.Sqlite.Helper
             this.ExecuteNonQuery(sqliteQueryBuilder);
         }
 
-        public void DeleteMulti<T>(List<T> componetList)
+        public void DeleteMulti<T>(List<T> componetList) where T : SqliteBaseData
         {
             componetList.ForEach(c => this.DeleteSingle(c));
         }

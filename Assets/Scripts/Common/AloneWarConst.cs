@@ -31,9 +31,15 @@ namespace AloneWar.Common
 
         public struct SqliteDataBaseName
         {
-            public const string Master = "Master.db";
+            public const string Master = "Master";
 
-            public const string Transaction = "Transaction.db";
+            public const string Transaction = "Transaction";
+
+            private const string Extension = ".db";
+
+            public const string MasterDb = Master + Extension;
+
+            public const string TransactionDb = Transaction + Extension;
         }
     }
 }

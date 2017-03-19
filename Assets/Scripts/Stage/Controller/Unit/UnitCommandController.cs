@@ -13,6 +13,7 @@ using UnityEngine;
 using AloneWar.Stage.Event.EventObject;
 using AloneWar.UI.Stage;
 using AloneWar.Unit.Component;
+using AloneWar.Common.Extensions;
 
 namespace AloneWar.Stage.Controller.Unit
 {
@@ -26,7 +27,7 @@ namespace AloneWar.Stage.Controller.Unit
         #region event
 
         /// <summary>
-        /// 汎用移動イベント
+        /// ユニット単位の移動イベント
         /// </summary>
         public List<PositionEvent> MoveEvent { get { return this.moveEvent; } set { this.moveEvent = value; } }
         private List<PositionEvent> moveEvent = new List<PositionEvent>();
@@ -70,16 +71,6 @@ namespace AloneWar.Stage.Controller.Unit
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="positionId"></param>
-        public void UpdatePosition(int positionId)
-        {
-            this.UnitBaseComponent.UnitBaseStatus.StageStatus.BeforePositionId = this.UnitBaseComponent.UnitBaseStatus.StageStatus.PositionId;
-            this.UnitBaseComponent.UnitBaseStatus.StageStatus.PositionId = positionId;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
         public void RemoveUnit()
         {
             // トリガーチェック
@@ -90,10 +81,10 @@ namespace AloneWar.Stage.Controller.Unit
                     // イベント実行後に行うコールバックを設定
                     k.EventAfterCallback = () =>
                     {
-                        int positionId = this.UnitBaseComponent.UnitBaseStatus.StageStatus.PositionId;
+                        int positionId = this.UnitBaseComponent.PositionId;
                         // 内部データより削除
                         StageManager.Instance.StageInformation.UnitSubComponentList.Remove(positionId);
-                        // 
+                        // 再設定 
                         StageManager.Instance.UnitRangeInit(positionId);
                         // 本体削除
                         UnityEngine.Object.Destroy(this.UnitBaseComponent);
@@ -110,7 +101,7 @@ namespace AloneWar.Stage.Controller.Unit
         {
             this.MoveEvent.ForEach(m =>
             {
-                bool valid = m.SetValidEvent(this.UnitBaseComponent.UnitBaseStatus.StageStatus.PositionId);
+                bool valid = m.SetValidEvent(this.UnitBaseComponent.PositionId);
                 // イベントが有効だった場合は待機に移行
                 if (valid)
                 {
@@ -128,7 +119,6 @@ namespace AloneWar.Stage.Controller.Unit
         private void Move()
         {
             this.UnitCommandHistoryStack.Push(new UnitCommandHistory(CommandCategory.Move));
-            this.UpdatePosition(this.UnitRoot.RootList.Last().MassComponent.PositionId);
             StageManager.Instance.TaskQueue.Enqueue(this.MoveTask);
         }
 
@@ -139,9 +129,10 @@ namespace AloneWar.Stage.Controller.Unit
         public IEnumerator MoveTask()
         {
             this.Move();
-            //yield return this.UnitBaseComponent.StartCoroutine(this.UnitRoot)
             yield return this.UnitBaseComponent.StartCoroutine(this.MoveRoot(this.UnitRoot.RootPositionList));
-            // イベントチェック
+            // 座標更新 & イベントチェック
+            StageObjectController.Instance.UpdateUnitPosition(this.UnitBaseComponent, this.UnitRoot.RootList.Last().MassComponent.PositionId);
+            // ユニークイベントチェック
             this.ValidPositionEvent();
 
             StageManager.Instance.UnitRangeInit(this.UnitBaseComponent.UnitBaseStatus.StageStatus.BeforePositionId);
@@ -156,20 +147,24 @@ namespace AloneWar.Stage.Controller.Unit
         {
             foreach (Vector3 position in positionRoot)
             {
-                Vector3 difPosition = this.UnitBaseComponent.transform.position - position;
+                // 座標を設定
+                this.UnitBaseComponent.NavMeshAgent.SetDestination(position);
                 while (true)
                 {
-                    this.UnitBaseComponent.transform.Translate(difPosition * Time.deltaTime * 10);
                     yield return new WaitForEndOfFrame();
-                    // 対象座標まで移動したら次の座標へ
-                    if (true)// 条件設定未構築
+                    EditorDebug.DebugAlert("移動制御");
+                    // 対象座標付近まで移動したら次の座標へ
+                    if (Vector3.Distance(this.UnitBaseComponent.transform.position, position) < 0.1f)
                     {
+                        this.UnitBaseComponent.transform.position = position;
                         break;
                     }
                 }
             }
-            
+
+            // 
             this.UnitBaseComponent.transform.position = positionRoot.Last();
+            this.UnitBaseComponent.NavMeshAgent.ResetPath();
         }
 
         /// <summary>

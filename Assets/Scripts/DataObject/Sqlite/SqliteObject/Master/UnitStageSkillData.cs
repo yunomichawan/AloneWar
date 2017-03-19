@@ -5,7 +5,7 @@ using AloneWar.DataObject.Sqlite.SqliteAttributes;
 
 namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
 {
-    [DataAccess("UnitStageSkillData", AloneWarConst.SqliteDataBaseName.Master)]
+    [DataAccess("UnitStageSkillData", AloneWarConst.SqliteDataBaseName.MasterDb)]
     public class UnitStageSkillData : SqliteBaseData, IForeignKey
     {
         [SqliteProperty]

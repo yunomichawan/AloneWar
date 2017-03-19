@@ -9,7 +9,6 @@ using AloneWar.Stage;
 using AloneWar.DataObject.Sqlite.SqliteObject.Base;
 using AloneWar.Stage.Component;
 using AloneWar.Stage.Event.EventObject;
-using AloneWar.Stage.Event.EventObject.Base;
 using AloneWar.Stage.Controller;
 using AloneWar.Common;
 

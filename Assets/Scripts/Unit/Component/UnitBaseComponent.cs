@@ -6,17 +6,25 @@ using AloneWar.Stage.Event.EventObject;
 using AloneWar.Unit.Status;
 using System;
 using System.Collections.Generic;
+using AloneWar.Common;
+using AloneWar.Stage.Controller.Range;
+using UnityEngine.AI;
 
 namespace AloneWar.Unit.Component
 {
     [Serializable]
-    public abstract class UnitBaseComponent : BaseStageObject
+    public abstract class UnitBaseComponent : BaseStageObject, IRangeHandler
     {
+        #region unity member
+
         /// <summary>
-        /// ユニークユニット移動イベント
+        /// 
         /// </summary>
-        public List<PositionEvent> UniqueMoveEvent { get { return this.uniqueMoveEvent; } set { this.uniqueMoveEvent = value; } }
-        private List<PositionEvent> uniqueMoveEvent = new List<PositionEvent>();
+        public NavMeshAgent NavMeshAgent { get; set; }
+
+        #endregion
+
+        #region override
 
         public override int StageObjectId
         {
@@ -32,9 +40,6 @@ namespace AloneWar.Unit.Component
             set
             {
                 this.UnitBaseStatus.StageStatus.PositionId = value;
-                this.UniqueMoveEvent.ForEach(u => {
-                    u.SetValidEvent(this.PositionId);
-                });
             }
         }
 
@@ -43,17 +48,27 @@ namespace AloneWar.Unit.Component
             get { return StageManager.Instance.StageInformation.GetPositionArea(this.PositionId); }
         }
 
+        public override GameObjectCategory GameObjectCategory
+        {
+            get
+            {
+                return GameObjectCategory.Unit;
+            }
+        }
+
+        #endregion
+
         #region controller
 
         /// <summary>
-        /// 破棄された場合、Sqliteクラスのインスタンスが破棄されるのでは？
+        /// 
         /// </summary>
         public UnitCommandController UnitCommandController { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public UnitRange UnitRange { get; set; }
+        public StageRange StageRange { get; set; }
 
         #endregion
 
@@ -63,6 +78,8 @@ namespace AloneWar.Unit.Component
         /// 
         /// </summary>
         public abstract UnitBaseStatus UnitBaseStatus { get; }
+
+        #endregion
 
         #region default range & command
 
@@ -99,7 +116,38 @@ namespace AloneWar.Unit.Component
             }
         }
 
-        #endregion
+        /// <summary>
+        /// 
+        /// </summary>
+        public CommandCategory MainCommand
+        {
+            get
+            {
+                return this.UnitBaseStatus.BaseStatus.MainCommand;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public CommandCategory SubCommand
+        {
+            get
+            {
+                return this.UnitBaseStatus.BaseStatus.SubCommand;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public UnitSideCategory UnitSide
+        {
+            get
+            {
+                return this.UnitBaseStatus.StageStatus.UnitSide;
+            }
+        }
 
         #endregion
 
@@ -110,8 +158,9 @@ namespace AloneWar.Unit.Component
         {
             this.UnitCommandController = new UnitCommandController(this);
             this.UnitCommandController.UnitRoot = new UnitRoot(this);
-            this.UnitRange = new UnitRange(this);
-            this.UnitRange.SetRange(this.UnitBaseStatus.MainCommand, this.UnitBaseStatus.SubCommand, this.MainRange, this.SubRange, 0, this.InvalidRange);
+            this.StageRange = new StageRange(this);
+            this.StageRange.SetRange(this.MainCommand, this.SubCommand, this.MainRange, this.SubRange, 0, this.InvalidRange);
+            this.NavMeshAgent = this.gameObject.AddComponent<NavMeshAgent>();
         }
     }
 }

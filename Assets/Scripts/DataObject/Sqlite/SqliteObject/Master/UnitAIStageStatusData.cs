@@ -8,7 +8,7 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
     /// <summary>
     /// 
     /// </summary>
-    [DataAccess("UnitAIStageStatusData", AloneWarConst.SqliteDataBaseName.Master)]
+    [DataAccess("UnitAIStageStatusData", AloneWarConst.SqliteDataBaseName.MasterDb)]
     public class UnitAIStageStatusData : SqliteBaseData
     {
         #region SqliteProperty
@@ -26,5 +26,13 @@ namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
         public string SearchArea { get; set; }
 
         #endregion
+
+        public AiCategory Ai
+        {
+            get
+            {
+                return (AiCategory)this.AiCategory;
+            }
+        }
     }
 }

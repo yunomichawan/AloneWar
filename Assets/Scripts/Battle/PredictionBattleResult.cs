@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using AloneWar.Common;
 using AloneWar.Unit.Status;
+using AloneWar.Unit.Component;
+using AloneWar.Stage;
 
 namespace AloneWar.Battle
 {
@@ -57,7 +59,14 @@ namespace AloneWar.Battle
         private void CountResultExpectedValue()
         {
             float count = 0;
-            if (this.DefenceBattleResultInfo.IsKill)
+
+            // 被/与計算をこの時点で行う。←AIだけに結果が先に見えているのは不公平。
+            if (this.DefenceBattleResultInfo.IsMainKill)
+            {
+                // 越えられない壁
+                count = 20000;
+            }
+            else if (this.DefenceBattleResultInfo.IsKill)
             {
                 // 最大値が決まっていない為、仮の値
                 count = 10000;
@@ -67,7 +76,6 @@ namespace AloneWar.Battle
                 // +与
                 count += this.AttackBattleResultInfo.HitPercent / 100 * this.AttackBattleResultInfo.Damage;
                 count += this.AttackBattleResultInfo.AvoidPercent;
-
                 if (this.DefenceBattleResultInfo.CanAttack)
                 {
                     // -被
@@ -125,6 +133,8 @@ namespace AloneWar.Battle
 
         public bool CanAttack { get; set; }
 
+        public bool IsMainKill { get; set; }
+
         #endregion
 
         public UnitBaseStatus UnitBaseStatus { get; set; }
@@ -142,7 +152,7 @@ namespace AloneWar.Battle
                 this.Damage = defence.BaseStatus.Defence - attack.BaseStatus.Attack;
                 this.CanAttack = true;
                 this.HitPercent = attack.BaseStatus.Hit - defence.BaseStatus.Avoid;
-                this.IsKill = defence.BaseStatus.Hp <= this.Damage + defence.StageStatus.Damage;
+                this.IsKill = defence.DamageHp <= this.Damage && HitPercent.Equals(AloneWarConst.MaxPercent);
             }
             else
             {
@@ -152,6 +162,12 @@ namespace AloneWar.Battle
             }
             this.AvoidPercent = defence.BaseStatus.Hit - attack.BaseStatus.Avoid;
             this.UnitBaseStatus = attack;
+            // メインへの影響を計算
+            if (defence.StageStatus.UnitSide.Equals(UnitSideCategory.Player) && this.IsKill)
+            {
+                UnitMainComponent unitMainComponent = StageManager.Instance.StageInformation.UnitMainComponent;
+                this.IsMainKill = unitMainComponent.UnitMainStatus.DamageHp <= defence.BaseStatus.Hp;
+            }
         }
     }
 }
