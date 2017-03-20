@@ -180,8 +180,12 @@
     <Compile Include="Assets\Scripts\Stage\StageInformation.cs" />
     <Compile Include="Assets\Scripts\Stage\StageManager.cs" />
     <Compile Include="Assets\Scripts\Stage\TunrProgression.cs" />
+    <Compile Include="Assets\Scripts\UI\Common\IChildPositionHandler.cs" />
     <Compile Include="Assets\Scripts\UI\Common\ListMenu\BaseListMenu.cs" />
+    <Compile Include="Assets\Scripts\UI\Common\ListMenu\ButtonListMenu.cs" />
+    <Compile Include="Assets\Scripts\UI\Common\UIObjectManager.cs" />
     <Compile Include="Assets\Scripts\UI\Component\LabelResourceText.cs" />
+    <Compile Include="Assets\Scripts\UI\Component\UIParentBehavior.cs" />
     <Compile Include="Assets\Scripts\UI\Stage\UIUnitCommand.cs" />
     <Compile Include="Assets\Scripts\Unit\Component\UnitBaseComponent.cs" />
     <Compile Include="Assets\Scripts\Unit\Component\UnitMainComponent.cs" />

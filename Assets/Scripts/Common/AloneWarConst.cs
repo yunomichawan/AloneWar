@@ -11,6 +11,13 @@ namespace AloneWar.Common
 
         public const float MaxPercent = 100;
 
+        public struct DisplaySize
+        {
+            public const int X = 1280;
+
+            public const int Y = 720;
+        }
+
         public struct SceneName
         {
             public const string Title = "Title";

@@ -19,6 +19,32 @@ namespace AloneWar.Common
     /// <summary>
     /// 
     /// </summary>
+    public enum UIPivot
+    {
+        Top,
+        TopRight,
+        Right,
+        BottomRight,
+        Bottom,
+        BottomLeft,
+        Left,
+        TopLeft,
+        Center,
+        None,
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public enum UIDirection
+    {
+        Vertical,
+        Horizontal,
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
     public enum BindCategory
     {
         Sqlite,

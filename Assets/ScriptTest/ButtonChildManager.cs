@@ -9,11 +9,16 @@ using AloneWar.DataObject.Sqlite.Helper;
 using AloneWar.DataObject.Sqlite.Service;
 using AloneWar.DataObject.Sqlite.SqliteObject.Master;
 using AloneWar.DataObject.Sqlite.SqliteObject.Transaction;
+using AloneWar.Stage.Component;
+using AloneWar.Stage.FieldObject;
 
 public class ButtonChildManager : MonoBehaviour {
 
     [SerializeField]
     public Button[] buttons;
+
+    [SerializeField]
+    public RectTransform rectTransform;
 
     // Use this for initialization
     void Start() {
