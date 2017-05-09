@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using AloneWar.Common;
+﻿using AloneWar.UI.Common.Parts.Command;
 
 namespace AloneWar.Stage.Controller.Unit
 {
     public class UnitCommandHistory
     {
-        public CommandCategory CommandCategory { get; set; }
+        public BaseCommandButton CommandButton { get; set; }
 
-        public UnitCommandHistory(CommandCategory commandCategory)
+        public UnitCommandHistory(BaseCommandButton commandButton)
         {
-            this.CommandCategory = commandCategory;
+            this.CommandButton = commandButton;
         }
     }
 }

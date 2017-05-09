@@ -29,7 +29,7 @@ namespace AloneWar.Common.Component.Operation.State
             this.Touch = Input.GetTouch(0);
             switch (this.Touch.phase)
             {
-                case TouchPhase.Began:
+                case TouchPhase.Began:// = LeftClick
                     this.InvokeOperation(this.BeganCallback, gameObject);
                     break;
                 case TouchPhase.Canceled:
@@ -38,7 +38,7 @@ namespace AloneWar.Common.Component.Operation.State
                 case TouchPhase.Ended:
                     this.InvokeOperation(this.EndedCallback, gameObject);
                     break;
-                case TouchPhase.Moved:
+                case TouchPhase.Moved:// = MouseOver
                     this.InvokeOperation(this.MovedCallback, gameObject);
                     break;
                 case TouchPhase.Stationary:

@@ -1,16 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
-using AloneWar.DataObject.Sqlite.SqliteObject;
-using AloneWar.Unit.Status;
-using AloneWar.Stage;
-using AloneWar.DataObject.Sqlite.SqliteObject.Base;
-using AloneWar.Stage.Component;
-using AloneWar.Stage.Event.EventObject;
-using AloneWar.Stage.Controller;
-using AloneWar.Common;
 
 namespace AloneWar.Unit.Component
 {
@@ -43,6 +32,23 @@ namespace AloneWar.Unit.Component
         public UnitSummaryComponent()
         {
             this.UnitSubComponentList = new List<UnitSubComponent>();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="callback"></param>
+        public void ForEach(Action<UnitBaseComponent> callback)
+        {
+            if (callback != null)
+            {
+                if (this.UnitMainComponent != null)
+                {
+                    callback(this.UnitMainComponent);
+                }
+                // .ForEach -> foreach
+                this.UnitSubComponentList.ForEach(callback);
+            }
         }
     }
 }

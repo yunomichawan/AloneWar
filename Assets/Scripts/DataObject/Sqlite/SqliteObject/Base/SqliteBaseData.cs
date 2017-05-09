@@ -1,6 +1,5 @@
-﻿using System;
+﻿using AloneWar.Common;
 using AloneWar.DataObject.Sqlite.SqliteAttributes;
-using AloneWar.Common;
 
 namespace AloneWar.DataObject.Sqlite.SqliteObject.Base
 {

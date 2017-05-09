@@ -1,9 +1,7 @@
-﻿using System;
+﻿using AloneWar.DataObject.Sqlite.SqliteObject.Base;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using AloneWar.DataObject.Sqlite.SqliteObject.Base;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace AloneWar.Common.Component
@@ -25,8 +23,7 @@ namespace AloneWar.Common.Component
 
         public static void Add<T>(T obj) where T : SqliteBaseData
         {
-            // Get,Setと同じように実装すること
-
+            Instance.AddObject<T>(obj);
         }
 
         public static void Remove(SqliteBaseData sqliteBaseData)

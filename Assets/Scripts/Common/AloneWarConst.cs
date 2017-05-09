@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace AloneWar.Common
+﻿namespace AloneWar.Common
 {
     public class AloneWarConst
     {
@@ -11,11 +6,23 @@ namespace AloneWar.Common
 
         public const float MaxPercent = 100;
 
+        /// <summary>
+        /// ルート探索の最大範囲
+        /// </summary>
+        public const int SearchRootMaxDistance = 100;
+
         public struct DisplaySize
         {
             public const int X = 1280;
 
             public const int Y = 720;
+        }
+
+        public struct MaterialProperty
+        {
+            public const string Shadow = "Shadow";
+
+            public const string MassColor = "MassColor";
         }
 
         public struct SceneName

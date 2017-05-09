@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using AloneWar.Common;
+﻿using AloneWar.Common;
 using AloneWar.Common.Bind;
 using AloneWar.Common.Component;
-using AloneWar.DataObject.Sqlite.SqliteObject.Base;
-using AloneWar.DataObject.Sqlite.Service;
 using AloneWar.DataObject.Sqlite.Helper;
+using AloneWar.DataObject.Sqlite.Service;
+using AloneWar.DataObject.Sqlite.SqliteObject.Base;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace AloneWar.DataObject
 {
@@ -57,20 +54,20 @@ namespace AloneWar.DataObject
         }
 
         /// <summary>
-        /// 読込
+        /// 読込(データが膨大になることが予測されるため、1フレームあたりの処理量を決める必要がありそう。。)
         /// </summary>
         public void Load(int saveId)
         {
             // トランザクションデータを全て読込
             TableSupportService tableSupportService = new TableSupportService();
             List<Type> typeList = tableSupportService.GetSqliteDataObjectTypeList(AloneWarConst.SqliteDataBaseName.Transaction);
-            typeList.ForEach(t =>
+            foreach (Type t in typeList)
             {
                 SqliteQueryBuilder sqliteQueryBuilder = new SqliteQueryBuilder(t);
                 DataTable dataTable = SqliteHelper.Instance.GetSqliteObjectTable(sqliteQueryBuilder);
                 IList list = DataAnonymousBinding.DataTableToObjectList(dataTable, t);
                 TransactionComponent.Set(t, list);
-            });
+            }
         }
 
         /// <summary>

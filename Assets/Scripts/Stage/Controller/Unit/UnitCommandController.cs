@@ -1,19 +1,10 @@
-﻿using AloneWar.Common;
-using AloneWar.DataObject.Sqlite.SqliteObject.Base;
-using AloneWar.Stage.Component;
-using AloneWar.Stage.FieldObject;
-using AloneWar.Unit.Status;
+﻿using AloneWar.Common.Extensions;
+using AloneWar.Stage.Event.EventObject;
+using AloneWar.Unit.Component;
 using System.Collections;
 using System.Collections.Generic;
-using System;
 using System.Linq;
-using System.Linq.Expressions;
-using UnityEngine.UI;
 using UnityEngine;
-using AloneWar.Stage.Event.EventObject;
-using AloneWar.UI.Stage;
-using AloneWar.Unit.Component;
-using AloneWar.Common.Extensions;
 
 namespace AloneWar.Stage.Controller.Unit
 {
@@ -29,22 +20,16 @@ namespace AloneWar.Stage.Controller.Unit
         /// <summary>
         /// ユニット単位の移動イベント
         /// </summary>
-        public List<PositionEvent> MoveEvent { get { return this.moveEvent; } set { this.moveEvent = value; } }
-        private List<PositionEvent> moveEvent = new List<PositionEvent>();
+        public List<StageEventHandler> MoveEvent { get { return this.moveEvent; } set { this.moveEvent = value; } }
+        private List<StageEventHandler> moveEvent = new List<StageEventHandler>();
 
         /// <summary>
         /// 
         /// </summary>
-        public List<UnitEvent> KillEvent { get { return this.killEvent; } set { this.killEvent = value; } }
-        private List<UnitEvent> killEvent = new List<UnitEvent>();
+        public List<StageEventHandler> KillEvent { get { return this.killEvent; } set { this.killEvent = value; } }
+        private List<StageEventHandler> killEvent = new List<StageEventHandler>();
 
         #endregion
-
-        /// <summary>
-        /// 履歴
-        /// </summary>
-        public Stack<UnitCommandHistory> UnitCommandHistoryStack { get { return this.unitCommandHistoryStack; } set { this.unitCommandHistoryStack = value; } }
-        private Stack<UnitCommandHistory> unitCommandHistoryStack = new Stack<UnitCommandHistory>();
 
         /// <summary>
         /// 
@@ -101,11 +86,9 @@ namespace AloneWar.Stage.Controller.Unit
         {
             this.MoveEvent.ForEach(m =>
             {
-                bool valid = m.SetValidEvent(this.UnitBaseComponent.PositionId);
-                // イベントが有効だった場合は待機に移行
-                if (valid)
+                if (m.StageTriggerSender.IsValidTrigger(this.UnitBaseComponent.PositionId))
                 {
-                    this.Wait();
+                    m.EnqueueEventTask();
                 }
             });
         }
@@ -118,7 +101,6 @@ namespace AloneWar.Stage.Controller.Unit
         /// <param name="toPositionId"></param>
         private void Move()
         {
-            this.UnitCommandHistoryStack.Push(new UnitCommandHistory(CommandCategory.Move));
             StageManager.Instance.TaskQueue.Enqueue(this.MoveTask);
         }
 
@@ -170,10 +152,32 @@ namespace AloneWar.Stage.Controller.Unit
         /// <summary>
         /// 
         /// </summary>
-        public void Wait()
+        private void Wait()
         {
-            this.unitCommandHistoryStack.Clear();
             this.UnitBaseComponent.UnitBaseStatus.StageStatus.Wait = true;
+            // 影を落とす
+            UnityExtensions.ShadowRender(this.UnitBaseComponent.spriteRenderer);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator WaitTask()
+        {
+            this.Wait();
+            yield return UnityExtensions.Wait1Frame();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void Active()
+        {
+            this.UnitBaseComponent.UnitBaseStatus.StageStatus.Wait = false;
+            // デフォルトに戻す
+            UnityExtensions.ShadowRender(this.UnitBaseComponent.spriteRenderer);
+            EditorDebug.DebugAlert("default rendrer");
         }
 
         /// <summary>
@@ -181,8 +185,7 @@ namespace AloneWar.Stage.Controller.Unit
         /// </summary>
         public void Back()
         {
-            UnitCommandHistory unitCommandHistory = this.UnitCommandHistoryStack.Pop();
-            UIUnitCommand.Instance.SetCommand(unitCommandHistory);
+
         }
 
         #endregion

@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Reflection;
-using AloneWar.DataObject.Sqlite.SqliteAttributes;
-using AloneWar.Common.Extensions;
 
 namespace AloneWar.Common.Bind
 {

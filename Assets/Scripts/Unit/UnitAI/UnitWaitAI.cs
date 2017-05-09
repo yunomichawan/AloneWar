@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using AloneWar.Common;
 using AloneWar.Unit.Component;
-using AloneWar.Common;
-using AloneWar.Stage;
 
 namespace AloneWar.Unit.UnitAI
 {
@@ -24,6 +18,7 @@ namespace AloneWar.Unit.UnitAI
 
         public override void SetTarget()
         {
+            // 範囲を再設定後に通常の処理を行う
             this.UnitSubComponent.StageRange.SetRange(CommandCategory.Attack, CommandCategory.None, this.UnitSubComponent.SubRange, 0, this.UnitSubComponent.InvalidRange, 0);
             base.SetTarget();
         }

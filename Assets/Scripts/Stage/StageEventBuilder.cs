@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using AloneWar.Common;
 using AloneWar.Common.TaskHelper;
 using AloneWar.DataObject.Sqlite.SqliteObject.Master;
-using AloneWar.DataObject.Sqlite.SqliteObject.Transaction;
-using AloneWar.Common;
-using AloneWar.Stage.Event.Sender;
+using AloneWar.Stage.Event.EventObject;
+using AloneWar.Stage.Event.EventSender;
+using AloneWar.Stage.Event.TriggerSender;
+using System.Collections;
 using UnityEngine;
 
 namespace AloneWar.Stage
@@ -31,52 +28,84 @@ namespace AloneWar.Stage
             switch (eventCategory)
             {
                 case EventCategory.GetUnit:
+                    Debug.Log("call event:" + eventCategory.ToString());
                     break;
                 case EventCategory.GetItem:
+                    Debug.Log("call event:" + eventCategory.ToString());
                     break;
                 case EventCategory.GetSkill:
+                    Debug.Log("call event:" + eventCategory.ToString());
                     break;
                 case EventCategory.AiChange:
+                    Debug.Log("call event:" + eventCategory.ToString());
                     break;
                 case EventCategory.SideChange:
+                    Debug.Log("call event:" + eventCategory.ToString());
                     break;
                 case EventCategory.UnitDamage:
+                    Debug.Log("call event:" + eventCategory.ToString());
                     break;
                 case EventCategory.UnitKill:
+                    Debug.Log("call event:" + eventCategory.ToString());
                     break;
                 case EventCategory.UnitSummon:
+                    Debug.Log("call event:" + eventCategory.ToString());
                     break;
                 case EventCategory.PositionClose:
+                    Debug.Log("call event:" + eventCategory.ToString());
                     break;
                 case EventCategory.Talk:
+                    Debug.Log("call event:" + eventCategory.ToString());
                     break;
             }
 
             yield return null;
         }
 
-        #region EventList
-
-        private IEnumerator EventGetUnit()
+        /// <summary>
+        /// イベントハンドラーを作成
+        /// </summary>
+        /// <param name="stageEventInformation"></param>
+        /// <returns></returns>
+        public StageEventHandler CreateEventHandler(StageEventInformation stageEventInformation)
         {
-            yield return null;
+            StageTriggerSender stageTriggerSender = this.GetTriggerSender(stageEventInformation.EventTriggerData.Category);
+            StageEventSender stageEventSender = this.GetEventSender(stageEventInformation.EventData.Category);
+
+            return new StageEventHandler(stageEventInformation, stageEventSender, stageTriggerSender);
         }
 
-        private IEnumerator EventGetItem()
+        /// <summary>
+        /// イベント引数を作成
+        /// </summary>
+        /// <param name="category"></param>
+        /// <returns></returns>
+        public StageEventSender GetEventSender(EventCategory category)
         {
-            yield return null;
+            switch (category)
+            {
+                case EventCategory.AiChange:
+                    return new UnitAISender();
+            }
+
+            return null;
         }
 
-        private IEnumerator EventGetSkill()
+        /// <summary>
+        /// トリガー引数を作成
+        /// </summary>
+        /// <param name="category"></param>
+        /// <returns></returns>
+        public StageTriggerSender GetTriggerSender(EventTriggerCategory category)
         {
-            yield return null;
+            switch (category)
+            {
+                case EventTriggerCategory.PositionClose:
+                    return new PositionCloseTrigger();
+                case EventTriggerCategory.AreaStop:
+                    return null;
+            }
+            return null;
         }
-
-        private IEnumerator EventAiChange()
-        {
-            yield return null;
-        }
-
-        #endregion
     }
 }

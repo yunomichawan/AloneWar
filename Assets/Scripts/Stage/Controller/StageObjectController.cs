@@ -1,18 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using AloneWar.Common.TaskHelper;
-using UnityEngine;
+﻿using AloneWar.Stage.Event.EventObject;
 using AloneWar.Unit.Component;
-using AloneWar.DataObject.Sqlite.SqliteObject;
-using AloneWar.Stage.FieldObject;
-using AloneWar.Stage.Component;
-using AloneWar.Stage.Event.EventObject;
-using AloneWar.Unit.Status;
-using AloneWar.DataObject.Sqlite.SqliteObject.Base;
-using AloneWar.Common;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace AloneWar.Stage.Controller
 {
@@ -32,8 +21,8 @@ namespace AloneWar.Stage.Controller
         /// <summary>
         /// 汎用移動イベント
         /// </summary>
-        public List<PositionEvent> MoveEvent { get { return this.moveEvent; } set { this.moveEvent = value; } }
-        private List<PositionEvent> moveEvent = new List<PositionEvent>();
+        public List<StageEventHandler> MoveEvent { get { return this.moveEvent; } set { this.moveEvent = value; } }
+        private List<StageEventHandler> moveEvent = new List<StageEventHandler>();
 
         /// <summary>
         /// 
@@ -46,7 +35,10 @@ namespace AloneWar.Stage.Controller
             unitBaseComponent.PositionId = positionId;
             this.MoveEvent.ForEach(m =>
             {
-                m.SetValidEvent(positionId);
+                if (m.StageTriggerSender.IsValidTrigger(positionId))
+                {
+                    m.EnqueueEventTask();
+                }
             });
         }
     }

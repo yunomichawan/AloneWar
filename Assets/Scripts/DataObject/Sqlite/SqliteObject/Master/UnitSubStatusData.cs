@@ -1,7 +1,7 @@
-﻿using System;
-using AloneWar.Common;
-using AloneWar.DataObject.Sqlite.SqliteObject.Base;
+﻿using AloneWar.Common;
 using AloneWar.DataObject.Sqlite.SqliteAttributes;
+using AloneWar.DataObject.Sqlite.SqliteObject.Base;
+using System;
 
 namespace AloneWar.DataObject.Sqlite.SqliteObject.Master
 {

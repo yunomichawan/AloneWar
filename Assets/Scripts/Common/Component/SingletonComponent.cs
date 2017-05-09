@@ -1,5 +1,4 @@
-﻿using AloneWar.Common.TaskHelper;
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace AloneWar.Common.Component

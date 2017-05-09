@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace AloneWar.Common
+﻿namespace AloneWar.Common
 {
     /// <summary>
     /// 
@@ -11,8 +6,8 @@ namespace AloneWar.Common
     public enum RangeDirection
     {
         Top,
-        Bottom,
         Right,
+        Bottom,
         Left,
     }
 

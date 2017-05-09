@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using AloneWar.Common;
-using AloneWar.Unit.Status;
-using AloneWar.Unit.Component;
+﻿using AloneWar.Common;
 using AloneWar.Stage;
+using AloneWar.Unit.Component;
+using AloneWar.Unit.Status;
 
 namespace AloneWar.Battle
 {

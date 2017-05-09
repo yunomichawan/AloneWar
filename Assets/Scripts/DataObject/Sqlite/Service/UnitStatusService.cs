@@ -37,7 +37,7 @@ namespace AloneWar.DataObject.Sqlite.Service
         public List<UnitSubStatus> GetUnitSubObejctStatusListOnStage(int stageId, bool isStage)
         {
             SqliteQueryBuilder builder = this.CreateQueryForUnitOnStage(stageId, isStage, typeof(UnitSubStatus));
-            builder.AddJoinTable(typeof(UnitStageStatusData), typeof(UnitAIStageStatusData), "Id", "UnitStageId");
+            builder.AddJoinTable(typeof(UnitStageStatusData), typeof(UnitAIStageStatusData), "Id", "UnitStageId", false);
             DataTable dataTable = SqliteHelper.Instance.GetSqliteObjectTable(builder);
 
             return this.SummaryUnitSubStatusList(dataTable); ;
@@ -52,7 +52,7 @@ namespace AloneWar.DataObject.Sqlite.Service
         public List<UnitSubStatus> GetUnitSubEventObjectList(int stageId, params int[] unitStageIdArray)
         {
             SqliteQueryBuilder builder = this.CreateQueryForUnitOnStage(stageId, true, typeof(UnitSubStatusData));
-            builder.AddJoinTable(typeof(UnitStageStatusData), typeof(UnitAIStageStatusData), "Id", "UnitStageId");
+            builder.AddJoinTable(typeof(UnitStageStatusData), typeof(UnitAIStageStatusData), "Id", "UnitStageId", false);
             builder.AddInCondition("Id", unitStageIdArray.Select<int, string>(u => u.ToString()).ToArray(), typeof(UnitStageStatusData), true);
             DataTable dataTable = SqliteHelper.Instance.GetSqliteObjectTable(builder);
 

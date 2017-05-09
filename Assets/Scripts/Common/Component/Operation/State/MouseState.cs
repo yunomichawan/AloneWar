@@ -22,6 +22,7 @@ namespace AloneWar.Common.Component.Operation.State
         public Action<GameObject> LeftCallback { get; set; }
         public Action<GameObject> RightCallback { get; set; }
         public Action<GameObject> MiddleCallback { get; set; }
+        public Action<GameObject> MouseOverCallback { get; set; }
 
         /// <summary>
         /// 
@@ -41,6 +42,8 @@ namespace AloneWar.Common.Component.Operation.State
             {
                 this.InvokeOperation(this.MiddleCallback, gameObject);
             }
+
+            this.InvokeOperation(this.MouseOverCallback, gameObject);
         }
     }
 }

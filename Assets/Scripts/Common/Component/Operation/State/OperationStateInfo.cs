@@ -32,6 +32,7 @@ namespace AloneWar.Common.Component.Operation.State
             this.MouseState.LeftCallback = userOperation.LeftClickAction;
             this.MouseState.RightCallback= userOperation.RightClickAction;
             this.MouseState.MiddleCallback = userOperation.MiddleClickAction;
+            this.MouseState.MouseOverCallback = userOperation.MouseOverAction;
 
             // Touch
             this.TouchState.BeganCallback = userOperation.BeganTouchAction;

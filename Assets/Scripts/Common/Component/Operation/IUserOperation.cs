@@ -19,6 +19,8 @@ namespace AloneWar.Common.Component.Operation
 
         void MiddleClickAction(GameObject clickObject);
 
+        void MouseOverAction(GameObject overObject);
+
         #endregion
 
         #region Touch

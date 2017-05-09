@@ -1,13 +1,9 @@
 ﻿using AloneWar.Common;
-using AloneWar.DataObject.Sqlite.SqliteObject.Base;
-using AloneWar.Stage.Component;
-using AloneWar.Stage.FieldObject;
 using AloneWar.Unit.Component;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
-namespace AloneWar.Stage.Controller.Range
+namespace AloneWar.Stage.Range
 {
     /// <summary>
     /// 
@@ -84,6 +80,15 @@ namespace AloneWar.Stage.Controller.Range
         }
 
         /// <summary>
+        /// 自身の座標を設定
+        /// </summary>
+        private RangeCommand GetMineRange()
+        {
+            int positionId = this.RangeHandler.PositionId;
+            return new RangeCommand(this.RangeHandler.UnitSide, positionId, this.MainRange, this.InvalidMainRange);
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="mainCommand"></param>
@@ -95,9 +100,8 @@ namespace AloneWar.Stage.Controller.Range
         public void SetRange(CommandCategory mainCommand, CommandCategory subCommand, int mainRange, int subRange, int invalidMainRange = 0, int invalidSubRange = 0)
         {
             this.InitRange(mainCommand, subCommand, mainRange, subRange, invalidMainRange, invalidSubRange);
-            int positionId = this.RangeHandler.PositionId;
 
-            RangeCommand massRange = new RangeCommand(this.RangeHandler.UnitSide, positionId, this.MainRange, this.InvalidMainRange);
+            RangeCommand massRange = this.GetMineRange();
             this.MainRangeCommandList.Add(massRange.MassComponent.PositionId, massRange);
             this.SetRangeLoop(new List<RangeCommand>(new RangeCommand[] { massRange }), this.MainRangeCommandList, this.SubRangeCommandList);
             this.SetRangeLoop(this.MainRangeCommandList.ToList().ConvertAll<RangeCommand>(r => r.Value), this.SubRangeCommandList, new Dictionary<int, RangeCommand>());
@@ -112,34 +116,13 @@ namespace AloneWar.Stage.Controller.Range
         {
             // ループ用リスト
             List<RangeCommand> rangeCommandNext = new List<RangeCommand>();
-            int w = StageManager.Instance.StageInformation.StageData.Width;
             rangeCommandLoop.ForEach(r =>
             {
-                MassStatus massStatus = r.MassComponent.MassStatus;
-                // top
-                RangeCommand upRange = new RangeCommand(r, massStatus.PositionId - w, RangeDirection.Top);
-                if (this.AddRangeIfValid(upRange, rangeCommandList0, rangeCommandList1))
+                // 周囲を設定
+                r.SetRoundRange(range =>
                 {
-                    rangeCommandNext.Add(upRange);
-                }
-                // bottom
-                RangeCommand bottomRange = new RangeCommand(r, massStatus.PositionId + w, RangeDirection.Bottom);
-                if (this.AddRangeIfValid(bottomRange, rangeCommandList0, rangeCommandList1))
-                {
-                    rangeCommandNext.Add(bottomRange);
-                }
-                // right
-                RangeCommand rightRange = new RangeCommand(r, massStatus.PositionId + 1, RangeDirection.Right);
-                if (this.AddRangeIfValid(rightRange, rangeCommandList0, rangeCommandList1))
-                {
-                    rangeCommandNext.Add(rightRange);
-                }
-                // left
-                RangeCommand leftRange = new RangeCommand(r, massStatus.PositionId - 1, RangeDirection.Left);
-                if (this.AddRangeIfValid(rightRange, rangeCommandList0, rangeCommandList1))
-                {
-                    rangeCommandNext.Add(leftRange);
-                }
+                    this.AddRangeIfValid(range, rangeCommandList0, rangeCommandList1, rangeCommandNext);
+                });
             });
             // 再帰処理
             this.SetRangeLoop(rangeCommandNext, rangeCommandList0, rangeCommandList1);
@@ -152,13 +135,16 @@ namespace AloneWar.Stage.Controller.Range
         /// <param name="rangeCommand"></param>
         /// <param name="rangeCommandList0"></param>
         /// <param name="rangeCommandList1"></param>
-        private bool AddRangeIfValid(RangeCommand rangeCommand, Dictionary<int, RangeCommand> rangeCommandList0, Dictionary<int, RangeCommand> rangeCommandList1)
+        /// <param name="rangeCommandList"></param>
+        /// <returns></returns>
+        private bool AddRangeIfValid(RangeCommand rangeCommand, Dictionary<int, RangeCommand> rangeCommandList0, Dictionary<int, RangeCommand> rangeCommandList1, List<RangeCommand> rangeCommandList)
         {
             if (!rangeCommandList0.ContainsKey(rangeCommand.MassComponent.PositionId) && !rangeCommandList1.ContainsKey(rangeCommand.MassComponent.PositionId))
             {
-                if (rangeCommand.IsValidSettingRange && rangeCommand.IsValidRangeUnit)
+                if (rangeCommand.IsValidSettingRange && rangeCommand.IsValidRangeThrough)
                 {
                     rangeCommandList0.Add(rangeCommand.MassComponent.PositionId, rangeCommand);
+                    rangeCommandList.Add(rangeCommand);
                     return true;
                 }
                 else
@@ -186,16 +172,16 @@ namespace AloneWar.Stage.Controller.Range
         /// <summary>
         /// 
         /// </summary>
-        public void SetRangeColor()
+        public void SetRangeColor(bool isClear = false)
         {
+            // デフォルト値を代入。clear == default?
+            CommandCategory clear = CommandCategory.None;
             this.MainRangeCommandList.ToList().ForEach(pair =>
             {
                 RangeCommand rangeCommand = this.MainRangeCommandList[pair.Key];
                 if (this.IsValidRange(rangeCommand))
                 {
-                    MassComponent massComponent = rangeCommand.MassComponent;
-                    //rangeCommand.CommandCategory より色を決定,有効/無効も決定基準に追加
-                    massComponent.GetComponent<SpriteRenderer>().color = new UnityEngine.Color();
+                    rangeCommand.MassComponent.SetMaterialColor(isClear ? clear : rangeCommand.CommandCategory);
                 }
             });
 
@@ -204,9 +190,7 @@ namespace AloneWar.Stage.Controller.Range
                 RangeCommand rangeCommand = this.SubRangeCommandList[pair.Key];
                 if (this.IsValidRange(rangeCommand))
                 {
-                    MassComponent massComponent = rangeCommand.MassComponent;
-                    //rangeCommand.CommandCategory より色を決定,有効/無効も決定基準に追加
-                    massComponent.GetComponent<SpriteRenderer>().color = new UnityEngine.Color();
+                    rangeCommand.MassComponent.SetMaterialColor(isClear ? clear : rangeCommand.CommandCategory);
                 }
             });
         }
@@ -270,7 +254,7 @@ namespace AloneWar.Stage.Controller.Range
         /// 設定した範囲内のユニットを取得
         /// </summary>
         /// <returns></returns>
-        public UnitSummaryComponent SearchRange(UnitSideCategory unitSideCategory)
+        public UnitSummaryComponent SearchUnitFromInRange(UnitSideCategory unitSideCategory)
         {
             UnitSummaryComponent unitSummaryComponent = new UnitSummaryComponent();
             List<int> mainKeys = this.MainRangeCommandList.Keys.ToList();
@@ -279,5 +263,6 @@ namespace AloneWar.Stage.Controller.Range
 
             return StageManager.Instance.StageInformation.SearchUnit(mainKeys, unitSideCategory);
         }
+
     }
 }

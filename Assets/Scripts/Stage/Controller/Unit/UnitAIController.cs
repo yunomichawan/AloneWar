@@ -1,13 +1,8 @@
-﻿using System;
+﻿using AloneWar.Common;
+using AloneWar.Unit.Component;
+using AloneWar.Unit.UnitAI;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using AloneWar.Unit.Component;
-using AloneWar.Stage.Component;
-using AloneWar.Common;
-using AloneWar.Common.Extensions;
-using AloneWar.Unit.UnitAI;
-using AloneWar.Battle;
 
 namespace AloneWar.Stage.Controller.Unit
 {
@@ -26,6 +21,7 @@ namespace AloneWar.Stage.Controller.Unit
             // でないと行動順がかなりバラバラになってしまう。このソートでもバラバラにならないわけではないがやらないよかまし？
             Queue<UnitBaseAI> aiQueue = new Queue<UnitBaseAI>(this.ConvertToAiQueue(unitSummaryComponent.UnitSubComponentList)
                 .OrderBy(a => a.UnitSubComponent.Area)
+                // 期待値が優先順位となっていない場合もあるため考慮が必要
                 .OrderByDescending(a => a.MaxResultExpectedValue));
             this.CreateAIQueueFromPrediction(aiQueue);
         }
@@ -50,12 +46,14 @@ namespace AloneWar.Stage.Controller.Unit
                     case AiCategory.Fool:
                         break;
                     case AiCategory.InRange:
+                        unitBaseAI = new UnitInRangeAI(u);
                         break;
                     case AiCategory.SacrificedPiece:
                         break;
                     case AiCategory.Simple:
                         break;
                     case AiCategory.TargetMain:
+                        unitBaseAI = new UnitTargetMainAI(u);
                         break;
                     case AiCategory.Wait:
                         unitBaseAI = new UnitWaitAI(u);
@@ -85,30 +83,7 @@ namespace AloneWar.Stage.Controller.Unit
                     break;
                 // 
                 UnitBaseAI ai = predictionQueue.Dequeue();
-                this.SetAITarget(ai);
                 ai.SetAITask();
-            }
-        }
-
-        /// <summary>
-        /// Aiの目標を決める
-        /// </summary>
-        private void SetAITarget(UnitBaseAI ai)
-        {
-            PredictionBattleResult result = ai.PredictionBattleResultList.FirstOrDefault();
-            if (result != null)
-            {
-                // 優先度の高い対象の存在チェック
-                if (StageManager.Instance.StageInformation.SearchUnit(result.TempPositionId, ai.UnitSubComponent.UnitSide.Reverse()).IsEmpty)
-                {
-                    ai.SetTarget();
-                    // 再帰
-                    this.SetAITarget(ai);
-                    // もしくは終了していないユニットのみで再集計を行い行動順を再設定する。
-                }
-                // 確定座標を設定
-                ai.TargetMovePosition = result.TempPositionId;
-                ai.TargetUnitPosition = result.DefenceBattleResultInfo.UnitBaseStatus.StageStatus.PositionId;
             }
         }
     }

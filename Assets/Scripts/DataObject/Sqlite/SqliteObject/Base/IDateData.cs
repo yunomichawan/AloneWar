@@ -1,5 +1,4 @@
 ﻿using System;
-using AloneWar.DataObject.Sqlite.SqliteAttributes;
 
 namespace AloneWar.DataObject.Sqlite.SqliteObject.Base
 {

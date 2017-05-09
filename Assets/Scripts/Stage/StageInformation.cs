@@ -1,16 +1,16 @@
 ﻿using AloneWar.Common;
-using AloneWar.Common.Extensions;
-using AloneWar.Common.Component;
 using AloneWar.DataObject.Sqlite.SqliteObject.Master;
 using AloneWar.DataObject.Sqlite.SqliteObject.Transaction;
 using AloneWar.Stage.Component;
-using AloneWar.Stage.Controller.Unit;
+using AloneWar.Stage.Event.EventObject;
+using AloneWar.Stage.Event.EventSender;
+using AloneWar.Stage.Event.TriggerSender;
 using AloneWar.Unit.Component;
 using AloneWar.Unit.Status;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Reflection;
 using UnityEngine;
 
 namespace AloneWar.Stage
@@ -134,12 +134,22 @@ namespace AloneWar.Stage
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="unitStageStatusId"></param>
+        /// <returns></returns>
+        public UnitSummaryComponent SearchUnitStage(int unitStageStatusId)
+        {
+            return this.SearchUnit(u => u.UnitBaseStatus.StageStatus.Id.Equals(unitStageStatusId));
+        }
+
+        /// <summary>
         /// 条件を満たすユニットを検索
         /// publicにしても問題ないのでは？
         /// </summary>
         /// <param name="func"></param>
         /// <returns></returns>
-        private UnitSummaryComponent SearchUnit(Func<UnitBaseComponent, bool> func)
+        public UnitSummaryComponent SearchUnit(Func<UnitBaseComponent, bool> func)
         {
             UnitSummaryComponent unitSummaryComponent = new UnitSummaryComponent();
             unitSummaryComponent.UnitSubComponentList = this.UnitSubComponentList.Values.Where(u => func(u)).ToList();
@@ -152,19 +162,6 @@ namespace AloneWar.Stage
         }
 
         #endregion
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="stageEventTableDataList"></param>
-        /// <param name="eventTableDataList"></param>
-        public void SetStageEventTableDataList(List<StageEventTriggerData> stageEventTriggerDataList, List<EventTriggerData> eventTriggerDataList, List<EventData> eventDataList, List<EventStatusData> eventStatusDataList)
-        {
-            for (int i = 0; i < stageEventTableDataList.Count; i++)
-            {
-                this.StageEventTableDataList.Add(new StageEventInformation(stageEventTriggerDataList[i], eventTriggerDataList[i], eventDataList[i], eventStatusDataList[i]));
-            }
-        }
 
         #region 座標
 
@@ -237,7 +234,7 @@ namespace AloneWar.Stage
             switch (rangeDirection)
             {
                 case RangeDirection.Top:
-                    return this.StageData.Width;
+                    return this.StageData.Width * -1;
                 case RangeDirection.Bottom:
                     return this.StageData.Width;
                 case RangeDirection.Right:
@@ -387,6 +384,19 @@ namespace AloneWar.Stage
 
         #endregion
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stageEventTableDataList"></param>
+        /// <param name="eventTableDataList"></param>
+        public void SetStageEventTableDataList(List<StageEventTriggerData> stageEventTriggerDataList, List<EventTriggerData> eventTriggerDataList, List<EventData> eventDataList, List<EventStatusData> eventStatusDataList)
+        {
+            for (int i = 0; i < stageEventTableDataList.Count; i++)
+            {
+                this.StageEventTableDataList.Add(new StageEventInformation(stageEventTriggerDataList[i], eventTriggerDataList[i], eventDataList[i], eventStatusDataList[i]));
+            }
+        }
+
         #endregion
     }
 
@@ -427,5 +437,79 @@ namespace AloneWar.Stage
             this.EventData = eventData;
             this.EventStatusData = eventStatusData;
         }
+
+        #region debug only code
+
+        public void CreateEventHandler()
+        {
+            //Debug.LogError("don't use this method! this method is debug only!");
+            Action<Action> act = (callback) => {
+                System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+                sw.Start();
+                for (int i = 0; i < 1000; i++)
+                {
+                    callback();
+                }
+                sw.Stop();
+                System.Console.WriteLine("Create Instance:"+sw.Elapsed);
+            };
+
+            // 速度計測-----------------------------------------------------
+
+            // インスタンス生成に10～40倍近くの処理時間を要する為、共通化は却下。処理速度の観点上、素直にクラスを作ること。
+            // コードは残していてもいいがデバッグ用とすること
+            // 0.001 / 1s … 1回、0.0004 / 1s … 1000回
+            //act(() => {
+            //    Type triggerType = this.GetTriggerSenderType();
+            //    Type eventType = this.GetEventSenderType();
+            //    Type genericEventHandlerType = typeof(GenericEventHandler<,>);
+            //    Type instanceType = genericEventHandlerType.MakeGenericType(eventType, triggerType);
+
+            //    // 主に時間が掛かっている部分がインスタンスの生成、それを速くできないか試行錯誤してみたが一旦あきらめる
+
+            //    // 実験1
+            //    // StageEventHandler stageEventHandler = (StageEventHandler)Activator.CreateInstance(instanceType, this);
+                
+            //    // 実験2
+            //    //ConstructorInfo c = instanceType.GetConstructor(new Type[] { typeof(StageEventInformation) });
+            //    //StageEventInformation stageEventInformation = new StageEventInformation(null, null, null, null);
+            //    //object obj = c.Invoke(new object[] { stageEventInformation });
+
+            //    // 1と2で大差なし
+
+            //    // コンストラクタのMethodInfoを取得して、そのデリゲートを作成したとしてもそれぞれの型によって生成しなければいけないので、その形式で実装してもあまり意味はないのでは？
+            //    // ↑MethodInfoではなくConstructorInfoだった...
+            //});
+
+            // 0.0001 / 1s … 1回、0.0002 / 1s … 1000回
+            //act(() => {
+            //    GenericEventHandler<UnitAISender, PositionCloseTrigger> aa = new GenericEventHandler<UnitAISender, PositionCloseTrigger>(this);
+            //});
+            // 速度計測-----------------------------------------------------
+        }
+
+        private Type GetEventSenderType()
+        {
+            switch (this.EventData.Category)
+            {
+                case EventCategory.AiChange:
+                    return typeof(UnitAISender);
+            }
+
+            return null;
+        }
+
+        private Type GetTriggerSenderType()
+        {
+            switch (this.EventTriggerData.Category)
+            {
+                case EventTriggerCategory.PositionClose:
+                    return typeof(PositionCloseTrigger);
+            }
+
+            return null;
+        }
+
+        #endregion
     }
 }

@@ -1,15 +1,10 @@
-﻿using AloneWar.Common;
-using AloneWar.Common.Bind;
-using AloneWar.Common.Component;
-using AloneWar.Common.Extensions;
-using AloneWar.DataObject.Sqlite.SqliteObject.Base;
+﻿using AloneWar.Common.Extensions;
 using AloneWar.DataObject.Sqlite.SqliteAttributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using UnityEngine;
 
 namespace AloneWar.DataObject.Sqlite.Helper
 {

@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using AloneWar.Common;
+﻿using AloneWar.Common;
 using UnityEngine;
 
 namespace AloneWar.UI.Common.ListMenu
 {
-    public class ButtonListMenu : BaseListMenu
+    public abstract class ButtonListMenu : BaseListMenu
     {
+        #region inspector property
+
         public override UIDirection UiDirection
         {
             get
@@ -28,5 +26,10 @@ namespace AloneWar.UI.Common.ListMenu
         }
         [SerializeField]
         private UIPivot uiPivot;
+
+        #endregion
+
+        public abstract void SetButtonsEvent();
+
     }
 }

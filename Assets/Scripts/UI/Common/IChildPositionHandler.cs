@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using AloneWar.Common;
 using UnityEngine;
-using AloneWar.Common;
 
 namespace AloneWar.UI.Common
 {

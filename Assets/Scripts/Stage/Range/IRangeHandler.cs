@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using AloneWar.Common;
+﻿using AloneWar.Common;
 
-namespace AloneWar.Stage.Controller.Range
+namespace AloneWar.Stage.Range
 {
     /// <summary>
     /// 範囲設定機能を実装

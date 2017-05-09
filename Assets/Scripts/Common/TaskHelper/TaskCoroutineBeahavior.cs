@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using UnityEngine;
 
 namespace AloneWar.Common.TaskHelper
@@ -62,6 +59,9 @@ namespace AloneWar.Common.TaskHelper
             this.TaskCompleted = false;
             Func<IEnumerator> task = this.TaskQueue.Dequeue();
             yield return StartCoroutine(task());
+
+            #region Skip Setting
+
             if (this.IsSkip)
             {
                 while (true)
@@ -75,6 +75,9 @@ namespace AloneWar.Common.TaskHelper
                 }
                 this.TaskEnd();
             }
+
+            #endregion
+
             // タスクが無くなり次第終了
             if (this.TaskQueue.Count.Equals(0))
             {

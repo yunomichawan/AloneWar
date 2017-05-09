@@ -1,8 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 
 // 拡張メソッドを実装
 namespace AloneWar.Common.Extensions

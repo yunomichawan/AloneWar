@@ -1,11 +1,8 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using AloneWar.Common.Bind;
-using AloneWar.Common.TaskHelper;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace AloneWar.Common.Bind
 {                                                                                                                                                   

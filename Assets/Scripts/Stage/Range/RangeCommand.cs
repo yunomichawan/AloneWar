@@ -1,13 +1,11 @@
-﻿using System;
+﻿using AloneWar.Common;
+using AloneWar.Common.Extensions;
+using AloneWar.Stage.Component;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using AloneWar.Common;
-using AloneWar.Stage.Component;
-using AloneWar.Unit.Component;
-using AloneWar.Common.Extensions;
 
-namespace AloneWar.Stage.Controller.Range
+namespace AloneWar.Stage.Range
 {
     public class RangeCommand
     {
@@ -27,6 +25,8 @@ namespace AloneWar.Stage.Controller.Range
 
         public MassComponent MassComponent { get; set; }
 
+        public bool IsSearchCompleted { get; set; }
+
         #region valid judge
 
         //外部クラスを利用するプロパティはメンバ変数を用意(パフォーマンスへの影響を考えて)
@@ -38,7 +38,7 @@ namespace AloneWar.Stage.Controller.Range
         {
             get
             {
-                return this.Range < 0 || this.MassComponent.MassStatus.IsClose;
+                return this.Range <= this.MasterRange || this.MassComponent.IsClose;
             }
         }
 
@@ -49,23 +49,23 @@ namespace AloneWar.Stage.Controller.Range
         {
             get
             {
-                return !this.IsOnUnit && this.CommandCategory.Equals(CommandCategory.Move);
+                return !this.IsOnUnit && this.CommandCategory.Equals(CommandCategory.Move) && !this.MassComponent.IsClose;
             }
         }
 
         /// <summary>
         /// ユニット通過 可/否
         /// </summary>
-        public bool IsValidRangeUnit
+        public bool IsValidRangeThrough
         {
             get
             {
-                if (this.isValidRangeUnit == null)
-                    this.isValidRangeUnit = StageManager.Instance.StageInformation.SearchUnit(this.MassComponent.PositionId, this.UnitSideCategory.Reverse()).IsEmpty;
-                return (bool)this.isValidRangeUnit;
+                if (this.isValidRangeThrough == null)
+                    this.isValidRangeThrough = StageManager.Instance.StageInformation.SearchUnit(this.MassComponent.PositionId, this.UnitSideCategory.Reverse()).IsEmpty;
+                return (bool)this.isValidRangeThrough;
             }
         }
-        private bool? isValidRangeUnit = null;
+        private bool? isValidRangeThrough = null;
 
         /// <summary>
         /// ユニット存在チェック
@@ -155,13 +155,32 @@ namespace AloneWar.Stage.Controller.Range
         {
             if (commandCategory.Equals(CommandCategory.Move))
             {
-                this.Range = rangeCommand.Range - this.MassComponent.MassStatus.Weight;
+                this.Range = rangeCommand.Range + this.MassComponent.MassStatus.Weight;
             }
             else
             {
-                this.Range = rangeCommand.Range - 1;
+                this.Range = rangeCommand.Range + 1;
             }
         }
-        
+
+        /// <summary>
+        /// 周りの範囲をに対して処理を行う
+        /// </summary>
+        /// <param name="rangeCommand"></param>
+        /// <param name="callback"></param>
+        public void SetRoundRange(Action<RangeCommand> callback)
+        {
+            int w = StageManager.Instance.StageInformation.StageData.Width;
+            int positionId = this.MassComponent.MassStatus.PositionId;
+
+            foreach (RangeDirection rangeDirection in Enum.GetValues(typeof(RangeDirection)))
+            {
+                int directionId = StageManager.Instance.StageInformation.GetDirectionPositionId(positionId, rangeDirection);
+                RangeCommand upRange = new RangeCommand(this, directionId, rangeDirection);
+                callback(upRange);
+            }
+            
+        }
+
     }
 }

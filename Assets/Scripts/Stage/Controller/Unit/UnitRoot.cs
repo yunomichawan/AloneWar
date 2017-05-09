@@ -1,12 +1,6 @@
-﻿using AloneWar.Common;
-using AloneWar.DataObject.Sqlite.SqliteObject.Base;
-using AloneWar.Stage.Component;
-using AloneWar.Stage.Controller.Range;
-using AloneWar.Stage.FieldObject;
+﻿using AloneWar.Stage.Range;
 using AloneWar.Unit.Component;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using UnityEngine;
 
 namespace AloneWar.Stage.Controller.Unit
@@ -58,7 +52,7 @@ namespace AloneWar.Stage.Controller.Unit
         }
 
         /// <summary>
-        /// 
+        /// 移動値の最大を超える場合は、新しく再度ルート設定
         /// </summary>
         /// <param name="rangeCommand"></param>
         public void AddRoot(RangeCommand rangeCommand)
@@ -81,6 +75,19 @@ namespace AloneWar.Stage.Controller.Unit
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="positionId"></param>
+        public void AddRoot(int positionId)
+        {
+            RangeCommand rangeCommand;
+            if (this.UnitBaseComponent.StageRange.MainRangeCommandList.TryGetValue(positionId, out rangeCommand))
+            {
+                this.AddRoot(rangeCommand);
+            }
+        }
+
+        /// <summary>
         /// 引数のルートまで戻る
         /// </summary>
         /// <param name="rangeCommand"></param>
@@ -90,7 +97,7 @@ namespace AloneWar.Stage.Controller.Unit
             {
                 if (this.RootList[i].Equals(rangeCommand))
                 {
-                    this.RootList.RemoveRange(i + 1, this.RootList.Count - i - 1);
+                    this.RemoveRootAndOther(i + 1, this.RootList.Count - i - 1);
                     break;
                 }
             }
@@ -128,6 +135,7 @@ namespace AloneWar.Stage.Controller.Unit
         {
             this.RootList.Add(rangeCommand);
             // SetColor,etc...
+            
         }
 
         /// <summary>
@@ -143,6 +151,15 @@ namespace AloneWar.Stage.Controller.Unit
                 // RemoveColor,etc...
             }
             this.RootList.RemoveRange(index, count);
+        }
+
+        /// <summary>
+        /// クリア
+        /// </summary>
+        public void ClearRoot()
+        {
+            this.RemoveRootAndOther(0, this.RootList.Count);
+            this.RootList.Clear();
         }
     }
 }

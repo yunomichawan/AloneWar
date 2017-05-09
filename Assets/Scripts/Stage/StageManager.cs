@@ -1,14 +1,12 @@
 ﻿using AloneWar.Common;
 using AloneWar.Common.Component;
-using AloneWar.Common.Component.Operation;
 using AloneWar.Common.Extensions;
 using AloneWar.DataObject.Json.Helper;
-using AloneWar.DataObject.Sqlite.SqliteObject.Base;
 using AloneWar.DataObject.Sqlite.SqliteObject.Master;
 using AloneWar.Stage.Component;
 using AloneWar.Stage.Controller;
-using AloneWar.Stage.Controller.Unit;
 using AloneWar.Stage.Event.EventObject;
+using AloneWar.Stage.Event.TriggerSender;
 using AloneWar.Stage.FieldObject;
 using AloneWar.Unit.Component;
 using AloneWar.Unit.Status;
@@ -23,6 +21,10 @@ namespace AloneWar.Stage
     /// <summary>
     /// ステージ全体の進行、データを管理
     /// </summary>
+    [RequireComponent(typeof(TurnProgression))]
+    [RequireComponent(typeof(StageEventBuilder))]
+    [RequireComponent(typeof(StageObjectController))]
+    [RequireComponent(typeof(StageUserOperation))]
     public class StageManager : SingletonTaskComponent<StageManager>
     {
 
@@ -43,11 +45,13 @@ namespace AloneWar.Stage
          タスク処理を1箇所にまとめるためinspectorで管理
          */
 
-        public TunrProgression tunrProgression;
+        public TurnProgression tunrProgression;
 
         public StageEventBuilder stageEventBuilder;
 
         public StageObjectController stageObjectController;
+
+        public StageUserOperation stageUserOperation;
 
         /// <summary>
         /// 親
@@ -89,7 +93,7 @@ namespace AloneWar.Stage
             // Field
             StageBuilder stageBuilder = new StageBuilder(this.StageInformation, this.unitParent, this.stageParent);
             stageBuilder.CreateStage();
-            
+
         }
 
         /// <summary>
@@ -200,10 +204,7 @@ namespace AloneWar.Stage
             /// 
             /// </summary>
             /// <typeparam name="ParentT">BaseStageObjectを継承したクラス型</typeparam>
-            /// <typeparam name="ChildT">ParentTが継承するUnitBaseComponent<T, EventT>のクラス型</typeparam>
-            /// <typeparam name="EventT">ParentTが継承するUnitBaseComponent<T, EventT>のクラス型</typeparam>
             /// <param name="prefab"></param>
-            /// <param name="attachChild"></param>
             /// <param name="callback"></param>
             private void CreateStageObject<ParentT>(GameObject prefab, Action<ParentT> callback)
                 where ParentT : BaseStageObject
@@ -211,7 +212,9 @@ namespace AloneWar.Stage
                 GameObject stageObject = prefab ?? new GameObject();
                 ParentT attachParent = stageObject.AddComponent<ParentT>();
                 stageObject.name = attachParent.StageObjectId.ToString();
-                Instantiate(stageObject, StageManager.Instance.StageInformation.GetPositionFromId(attachParent.PositionId), Quaternion.identity);
+                GameObject instantiateObject = Instantiate(stageObject, StageManager.Instance.StageInformation.GetPositionFromId(attachParent.PositionId), Quaternion.identity);
+                instantiateObject.AddComponent<Collider2D>();
+                EditorDebug.DebugAlert("Collider2Dの詳細設定");
 
                 if (callback != null)
                 {
@@ -224,51 +227,11 @@ namespace AloneWar.Stage
             /// </summary>
             private void SetStageEvent()
             {
+                StageEventBuilder builder = StageManager.Instance.stageEventBuilder;
                 foreach (StageEventInformation stageEventInformation in this.StageInformation.StageEventTableDataList)
                 {
-                    StageEventTriggerData stageEventTriggerData = stageEventInformation.StageEventTriggerData;
-                    EventData eventData = stageEventInformation.EventData;
-                    EventTriggerData eventTriggerData =stageEventInformation.EventTriggerData;
-                    EventTriggerCategory trigger = (EventTriggerCategory)eventTriggerData.TriggerCategory;
-                    switch (trigger)
-                    {
-                        case EventTriggerCategory.AreaStop:
-                            // set trigger To unit command
-                            break;
-                        case EventTriggerCategory.PositionStop:
-                            // set trigger To unit command
-                            break;
-                        case EventTriggerCategory.PositionStopUniqueUnit:
-                            break;
-                        case EventTriggerCategory.PositionClose:
-                            // set trigger To mass
-                            List<int> positionIdList = eventTriggerData.TriggerSender.Split(',').Select<string, int>(s => { return int.Parse(s); }).ToList();
-                            positionIdList.ForEach(p =>
-                            {
-                                MassComponent massComponent = this.StageInformation.MassComponentList[p];
-                                PositionEvent massEvent = new PositionEvent(stageEventInformation, massComponent);
-                                massComponent.CloseEventList.Add(massEvent);
-                            });
-                            break;
-                        case EventTriggerCategory.TargetUnitKill:
-                            
-                            break;
-                        case EventTriggerCategory.UnitKill:
-                            // set trigger To battle
-                            break;
-                        case EventTriggerCategory.TurnOver:
-                            // set trigger To tunrProgression
-                            break;
-                        case EventTriggerCategory.UnitAdjacent:
-                            // set trigger To unit command
-                            break;
-                        case EventTriggerCategory.StageStart:
-                            break;
-                        case EventTriggerCategory.StageEnd:
-                            break;
-                        default:
-                            break;
-                    }
+                    StageEventHandler handler = builder.CreateEventHandler(stageEventInformation);
+                    handler.SetStageEventTrigger();
                 }
             }
 
@@ -277,7 +240,7 @@ namespace AloneWar.Stage
             /// </summary>
             private void SetClearStageTrigger()
             {
-                
+
             }
         }
     }

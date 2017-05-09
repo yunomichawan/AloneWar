@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using AloneWar.DataObject.Sqlite.SqliteObject;
-using AloneWar.DataObject.Sqlite.SqliteObject.Base;
-using UnityEngine;
-using AloneWar.Common;
+﻿using AloneWar.DataObject.Sqlite.SqliteObject.Base;
+using System;
 
 namespace AloneWar.Unit.Status
 {

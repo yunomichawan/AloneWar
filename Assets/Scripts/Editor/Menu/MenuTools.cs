@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
-using AloneWar.DataObject.Sqlite.Helper;
+﻿using AloneWar.DataObject.Sqlite.Helper;
 using AloneWar.DataObject.Sqlite.Service;
 using AloneWar.DataObject.Sqlite.SqliteObject.Master;
+using UnityEditor;
+using UnityEngine;
 
 public class ManuTools : MonoBehaviour {
     

@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
-using AloneWar.Stage.Event.EventObject;
-
-namespace AloneWar.Stage.FieldObject
+﻿namespace AloneWar.Stage.FieldObject
 {
     /// <summary>
     /// 
@@ -29,7 +21,7 @@ namespace AloneWar.Stage.FieldObject
         public int PositionId { get; set; }
 
         /// <summary>
-        /// 
+        /// 通過可否(直接参照しないこと)
         /// </summary>
         public bool IsClose
         {

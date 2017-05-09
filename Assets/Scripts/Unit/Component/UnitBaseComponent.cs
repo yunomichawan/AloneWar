@@ -1,13 +1,11 @@
-﻿using AloneWar.DataObject.Sqlite.SqliteObject.Base;
+﻿using AloneWar.Common;
 using AloneWar.Stage;
 using AloneWar.Stage.Component;
 using AloneWar.Stage.Controller.Unit;
-using AloneWar.Stage.Event.EventObject;
+using AloneWar.Stage.Range;
 using AloneWar.Unit.Status;
 using System;
-using System.Collections.Generic;
-using AloneWar.Common;
-using AloneWar.Stage.Controller.Range;
+using UnityEngine;
 using UnityEngine.AI;
 
 namespace AloneWar.Unit.Component
@@ -16,6 +14,12 @@ namespace AloneWar.Unit.Component
     public abstract class UnitBaseComponent : BaseStageObject, IRangeHandler
     {
         #region unity member
+
+        #region inspector
+
+        public SpriteRenderer spriteRenderer;
+
+        #endregion
 
         /// <summary>
         /// 

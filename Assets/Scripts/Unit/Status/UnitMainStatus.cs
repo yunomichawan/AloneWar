@@ -1,10 +1,4 @@
-﻿using AloneWar.Common.Component;
-using AloneWar.DataObject.Sqlite.SqliteObject.Base;
-using AloneWar.DataObject.Sqlite.SqliteObject.Master;
-using AloneWar.DataObject.Sqlite.SqliteObject.Transaction;
-using System.Collections.Generic;
-using AloneWar.DataObject;
-using AloneWar.Common;
+﻿using AloneWar.DataObject.Sqlite.SqliteObject.Master;
 
 namespace AloneWar.Unit.Status
 {

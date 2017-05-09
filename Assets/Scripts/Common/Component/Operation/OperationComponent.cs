@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using AloneWar.Common.Component.Operation.State;
 using UnityEngine;
-using AloneWar.Common.Extensions;
-using AloneWar.Common.Component.Operation.State;
 
 namespace AloneWar.Common.Component.Operation
 {
@@ -34,7 +29,7 @@ namespace AloneWar.Common.Component.Operation
         private void SetOperationState()
         {
             Touch touch = Input.GetTouch(0);
-            Vector3 touchPosition = Vector3.zero;
+            Vector3 touchPosition = touch.position;
             Vector3 mousePosition = Input.mousePosition;
             this.InvokeOperation(touchPosition, this.Operation.TouchState);
             this.InvokeOperation(mousePosition, this.Operation.MouseState);
@@ -52,6 +47,10 @@ namespace AloneWar.Common.Component.Operation
             if (collider2D != null)
             {
                 baseOperationState.SetState(collider2D.gameObject);
+            }
+            else
+            {
+                baseOperationState.SetState(null);
             }
         }
 

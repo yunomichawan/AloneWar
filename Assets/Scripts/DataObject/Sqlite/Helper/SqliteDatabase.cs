@@ -1,12 +1,9 @@
-using System;
-using System.Runtime.InteropServices;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Reflection;
 using AloneWar.Common.Bind;
-using AloneWar.Common.Extensions;
-using AloneWar.Common.TaskHelper;
-using AloneWar.DataObject.Sqlite.SqliteAttributes;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using UnityEngine;
 
 /*
  * please don't use this code for sell a asset
